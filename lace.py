@@ -27,21 +27,31 @@ def query():
    run_details['date'] = date = request.args.get('date','')
    run_details['view'] = view = request.args.get('view','')
    page_id = text_id + '_' + page_num
-   html_path = text_id + '/' + date+'_'+classifier+'_'+view+'/' + page_id + ".html"
-   tp = textpath_for_run_details(run_details)
-   sp = get_sister_pages(tp)
+   html_path = textpath_for_run_details(run_details)
+   return side_by_side_view(html_path)
+
+def side_by_side_view(html_path): 
+   sp = get_sister_pages(html_path)
+   number_of_sister_pages = len(sp)
    print sp
    import os.path
-   print sp.index(os.path.basename(tp)) 
+   this_page_index =  sp.index(os.path.basename(html_path)) 
    #TODO figure out how to use url_for here: 
    html_url = '/text/' + html_path 
-   page_before_exists = page_offset_exists(run_details, -1)
-   page_after_exists = page_offset_exists(run_details, 1)
-   
-   page_before = url_for_run_details('query', page_offset(run_details, -1))
-   page_after = url_for_run_details('query', page_offset(run_details, 1))
+   page_before_exists = (not this_page_index == 0)
+   page_after_exists = (not this_page_index == number_of_sister_pages)
+   if page_before_exists:
+      page_before = os.path.join(os.path.dirname(html_path), sp[this_page_index -1])
+   else:
+      page_before = None
+   if page_after_exists:
+      page_after = os.path.join(os.path.dirname(html_path), sp[this_page_index +1])
+   else:
+      page_after = None
+
    print "page_after", page_after
    print "page_before", page_before
+   #parse the path to get text_id and page_num
    try:
       text_info = get_text_info(text_id)
       return render_template('sidebyside.html', html_path=html_url, text_info=text_info, image_path=url_for_page_image(text_id, page_num), classifier=classifier, date=date, view=view, page_num_normalized=int(page_num), page_after_exists=page_after_exists, page_before_exists=page_before_exists, page_before=page_before, page_after=page_after)
