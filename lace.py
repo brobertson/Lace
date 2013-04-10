@@ -1,5 +1,5 @@
 from flask import Flask, url_for
-from settings import APP_ROOT
+from settings import APP_ROOT,POSSIBLE_HOCR_VIEWS
 app = Flask(__name__)
 
 @app.route('/')
@@ -30,33 +30,60 @@ def query():
    html_path = textpath_for_run_details(run_details)
    return side_by_side_view(html_path)
 
+@app.route('/sidebysideview/<path:html_path>')
 def side_by_side_view(html_path): 
+   from flask import render_template
    sp = get_sister_pages(html_path)
    number_of_sister_pages = len(sp)
    print sp
    import os.path
-   this_page_index =  sp.index(os.path.basename(html_path)) 
+   filename = os.path.basename(html_path)
+   this_page_index =  sp.index(filename) 
    #TODO figure out how to use url_for here: 
    html_url = '/text/' + html_path 
    page_before_exists = (not this_page_index == 0)
    page_after_exists = (not this_page_index == number_of_sister_pages)
    if page_before_exists:
-      page_before = os.path.join(os.path.dirname(html_path), sp[this_page_index -1])
+      page_before = url_for('side_by_side_view',html_path = os.path.join(os.path.dirname(html_path), sp[this_page_index - 1]))
    else:
       page_before = None
    if page_after_exists:
-      page_after = os.path.join(os.path.dirname(html_path), sp[this_page_index +1])
+      page_after = url_for('side_by_side_view', html_path = os.path.join(os.path.dirname(html_path), sp[this_page_index + 1]))
    else:
       page_after = None
-
-   print "page_after", page_after
-   print "page_before", page_before
-   #parse the path to get text_id and page_num
+   (text_id, page_num) = filename.split('_')
+   page_num = page_num[0:-5]
+   (view, date, classifier) = parse_path(html_path) 
+   pagination_array = make_pagination_array(number_of_sister_pages, this_page_index, 7, html_path, sp)
    try:
       text_info = get_text_info(text_id)
-      return render_template('sidebyside.html', html_path=html_url, text_info=text_info, image_path=url_for_page_image(text_id, page_num), classifier=classifier, date=date, view=view, page_num_normalized=int(page_num), page_after_exists=page_after_exists, page_before_exists=page_before_exists, page_before=page_before, page_after=page_after)
+      return render_template('sidebyside.html', html_path=html_url, text_info=text_info, image_path=url_for_page_image(text_id, page_num), classifier=classifier, date=date, view=view, page_num_normalized=int(page_num), page_after_exists=page_after_exists, page_before_exists=page_before_exists, page_before=page_before, page_after=page_after, pagination_array=pagination_array)
    except IOError:
       return render_template('no_such_text_id.html', textid=text_id), 404
+
+def make_pagination_array(total, this_index, steps, html_path, sister_pages):
+	import os.path
+	stepsize = int(total/steps)
+	pagination_array = []
+	for i in range(steps):
+		this_index = stepsize * i
+		pagination_array.append([(this_index),url_for('side_by_side_view', html_path = os.path.join(os.path.dirname(html_path), sister_pages[this_index + 1]))])
+	print pagination_array
+	return pagination_array
+def parse_path(textpath):
+   import os.path
+   last_dir = os.path.basename(os.path.dirname(textpath))
+   #last_dir = os.path.dirname(textpath)
+   for view in POSSIBLE_HOCR_VIEWS:
+      (before, sep, after) = last_dir.partition('_' + view)
+      print
+      print before, sep, after
+      if sep:
+	      parts = before.split('_')
+	      date = parts[0]
+	      classifier = '_'.join(parts[1:])
+	      return (view, date, classifier)
+   raise ValueError("Path " + last_dir + " cannot be parsed with given views.")
 
 def get_absolute_textpath(textpath):
    return APP_ROOT + url_for('static',filename="Texts/"+textpath )

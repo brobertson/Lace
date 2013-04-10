@@ -1,11 +1,9 @@
 <ul id="pagination-clean">
-<li class="previous-off">«Previous</li>
-<li class="active">1</li>
-<li><a href="?page=2">2</a></li>
-<li><a href="?page=3">3</a></li>
-<li><a href="?page=4">4</a></li>
-<li><a href="?page=5">5</a></li>
-<li><a href="?page=6">6</a></li>
-<li><a href="?page=7">7</a></li>
-<li class="next"><a href="?page=2">Next »</a></li>
+	<li class="previous{% if (not page_before_exists) %}-off{% endif %}"><a href="{{ page_before }}">«Previous</li>
+
+{% for section in pagination_array %}
+<li><a href="{{ section[1] }}">{{ section[0] }}</a></li>
+{% endfor %}
+<li class="next{% if (not page_after_exists) %}-off{% endif %}">
+<a href="{{ page_after }}">Next »</a></li>
 </ul>
