@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    .important { color: #990099; }
+  </style>
+{% endblock %}
+{% block top %}
+  <h1 class="important">Error</h1>
+  <p class="important">
+    The metadata file for {{ textid }}  does not exist.
+  </p>
+{% endblock %}

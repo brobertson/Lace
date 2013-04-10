@@ -1,0 +1,55 @@
+@import url(http://fonts.googleapis.com/css?family=Junge);
+@import url("http://fonts.googleapis.com/css?family=Cardo");
+
+/* put hyphen in name to distinguish from regular font
+*/
+@font-face {
+    font-family: 'GFS-Porson';
+    src: url('http://heml.mta.ca/Rigaudon/fonts/porson/gfsporsonregular.eot');
+    src: url('http://heml.mta.ca/Rigaudon/fonts/porson/gfsporsonregular.eot?#iefix') format('embedded-opentype'),
+         url('http://heml.mta.ca/Rigaudon/fonts/porson/gfsporsonregular.woff') format('woff'),
+         url('http://heml.mta.ca/Rigaudon/fonts/porson/gfsporsonregular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+    unicode-range:
+        U+0370–U+03FF,
+        U+1F00–U+1FFF;
+
+}
+
+body {
+  font-family: 'GFS-Porson', 'New Athena Unicode', 'GFS Philostratos', 'GFS Porson', 'Junge', serif;
+  font-size: 16px;
+}
+
+
+#page_image{
+        width: 50%;
+        float:left;
+        }
+#page_right{
+        width: 50%;
+        float:left;
+        }
+h1 { 
+font-size: 12pt; 
+font-weight: bold; 
+text-align: left; 
+display:inline; 
+font-family: 'Junge', serif;
+}
+#next {
+  float:right;
+  margin-right:50pt;
+}
+#prev {
+  margin-left:50pt;
+}
+#footer {
+clear:both;
+/*background:#cc9;*/
+}
+p {
+font-family: 'Junge', serif;
+}

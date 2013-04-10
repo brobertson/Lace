@@ -1,0 +1,55 @@
+@import url("http://fonts.googleapis.com/css?family=Cardo"); 
+
+/* put hyphen in name to distinguish from regular font
+*/
+@font-face {
+    font-family: 'GFS-Porson';
+    src: url('http://heml.mta.ca/Rigaudon/fonts/porson/gfsporsonregular.eot');
+    src: url('http://heml.mta.ca/Rigaudon/fonts/porson/gfsporsonregular.eot?#iefix') format('embedded-opentype'),
+         url('http://heml.mta.ca/Rigaudon/fonts/porson/gfsporsonregular.woff') format('woff'),
+         url('http://heml.mta.ca/Rigaudon/fonts/porson/gfsporsonregular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    
+    unicode-range:
+        U+0370–U+03FF,
+        U+1F00–U+1FFF;
+
+}
+
+/*
+span.ocr_word {
+    margin:0 0.1em;
+     background:#faf; 
+}
+*/
+body {
+  font-family: 'GFS-Porson', 'New Athena Unicode', 'GFS Philostratos', 'GFS Porson', 'Cardo', serif;
+  font-size: 16px;
+}
+
+span.ocr_word:first-of-type {
+    margin-left:0;
+}
+
+span.ocr_word:last-of-type {
+    margin-right:0;
+}
+
+/*
+span.ocr_line {
+    display: block;
+}
+*/
+p{
+    margin: 0;
+    padding: 0;
+}
+
+p span:first-child {
+	text-indent: 2em;
+}
+
+p:first-child span:first-child {
+       text-indent: 0em;
+}

@@ -1,0 +1,5 @@
+{% if text_info %}
+  <h3>{{ text_info['creator'] }} ({{ text_info['date'] }}). <i>{{text_info['title']}} {{text_info['volume']}}.</h3>
+{% else %}
+  <h3>Error: text_info missing</h3>
+{% endif %}
