@@ -20,7 +20,10 @@ def url_for_page_image(text_id, page_num):
 
 
 def url_for_run_details(endpoint, run_details):
-    return url_for(endpoint, text_id=run_details['text_id'], page_num=run_details['page_num'], classifier=run_details['classifier'], date=run_details['date'], view=run_details['view'])
+    return url_for(endpoint, text_id=run_details['text_id'],
+                   page_num=run_details['page_num'],
+                   classifier=run_details['classifier'],
+                   date=run_details['date'], view=run_details['view'])
 
 
 @app.route('/query', methods=['GET'])
@@ -66,19 +69,32 @@ def side_by_side_view(html_path):
         number_of_sister_pages, this_page_index, 25, html_path, sp)
     try:
         text_info = get_text_info(text_id)
-        return render_template('sidebyside.html', html_path=html_url, text_info=text_info, image_path=url_for_page_image(text_id, page_num), classifier=classifier, date=date, view=view, page_num_normalized=int(page_num), page_after_exists=page_after_exists, page_before_exists=page_before_exists, page_before=page_before, page_after=page_after, pagination_array=pagination_array)
+        return render_template('sidebyside.html', html_path=html_url,
+                               text_info=text_info,
+                               image_path=
+                               url_for_page_image(text_id, page_num),
+                               classifier=classifier, date=date, view=view,
+                               page_num_normalized=int(page_num),
+                               page_after_exists=page_after_exists,
+                               page_before_exists=page_before_exists,
+                               page_before=page_before,
+                               page_after=page_after,
+                               pagination_array=pagination_array)
     except IOError:
         return render_template('no_such_text_id.html', textid=text_id), 404
 
 
 def make_pagination_array(total, this_index, steps, html_path, sister_pages):
     import os.path
-    stepsize = int(total/steps)
+    stepsize = int(total / steps)
     pagination_array = []
     for i in range(steps):
         this_index = stepsize * i
-        pagination_array.append([(this_index + 1), url_for('side_by_side_view', html_path=os.path.join(
-            os.path.dirname(html_path), sister_pages[this_index]))])
+        pagination_array.append([(this_index + 1),
+                                 url_for('side_by_side_view',
+                                         html_path=os.path.join(
+                                         os.path.dirname(html_path),
+                                             sister_pages[this_index]))])
     print pagination_array
     return pagination_array
 
@@ -101,7 +117,7 @@ def parse_path(textpath):
 
 
 def get_absolute_textpath(textpath):
-    return APP_ROOT + url_for('static', filename="Texts/"+textpath)
+    return APP_ROOT + url_for('static', filename="Texts/" + textpath)
 
 
 def get_sister_pages(textpath):
@@ -137,19 +153,19 @@ def page_offset_exists(run_details, offset):
 
 @app.route('/text/<path:textpath>')
 def hello_world(textpath):
-    from flask import render_template
-    import lxml
     from lxml import etree
     a = get_absolute_textpath(textpath)
     print a
     try:
         tree = etree.parse(a)
         root = tree.getroot()
-        head_element = tree.xpath("/html:html/html:head | /html/head", namespaces={
+        head_element = tree.xpath("/html:html/html:head | /html/head",
+                                  namespaces={
                                   'html': "http://www.w3.org/1999/xhtml"})[0]
         css_file = url_for('static', filename='hocr.css')
         style = etree.SubElement(
-            head_element, "link", rel="stylesheet", type="text/css", href=css_file)
+            head_element, "link", rel="stylesheet", type="text/css",
+            href=css_file)
         return etree.tostring(root, pretty_print=True)
     except Exception as e:
         return ""
@@ -167,7 +183,6 @@ def get_text_info(textid):
 @app.route('/textinfo/<textid>')
 def show_text_info(textid):
     from flask import render_template
-    info = get_text_info(textid)
     return render_template('textinfo.html', text_info=text_info)
 
 
@@ -187,7 +202,7 @@ def collect_archive_text_info(archive_xml_file):
                   'publisher', 'date', 'identifier-access', 'volume']
     tree = etree.parse(archive_xml_file)
     for category in categories:
-        data = tree.xpath('/metadata/'+category+'/text()')
+        data = tree.xpath('/metadata/' + category + '/text()')
         try:
             info[category] = data[0]
             if len(data) > 1:
