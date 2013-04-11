@@ -70,6 +70,7 @@ def side_by_side_view(html_path):
     try:
         text_info = get_text_info(text_id)
         return render_template('sidebyside.html', html_path=html_url,
+                               text_id=text_id,
                                text_info=text_info,
                                image_path=
                                url_for_page_image(text_id, page_num),
@@ -87,14 +88,21 @@ def side_by_side_view(html_path):
 def make_pagination_array(total, this_index, steps, html_path, sister_pages):
     import os.path
     stepsize = int(total / steps)
+    my_place = (this_index / stepsize)
     pagination_array = []
+    is_current = False
     for i in range(steps):
-        this_index = stepsize * i
-        pagination_array.append([(this_index + 1),
+        if i == my_place:
+            current_index = this_index
+            is_current = True
+        else:
+            current_index = stepsize * i
+            is_current = False
+        pagination_array.append([(current_index + 1),
                                  url_for('side_by_side_view',
-                                         html_path=os.path.join(
-                                         os.path.dirname(html_path),
-                                             sister_pages[this_index]))])
+                                 html_path=os.path.join(
+                                 os.path.dirname(html_path),
+                                 sister_pages[current_index])), is_current])
     print pagination_array
     return pagination_array
 
@@ -177,13 +185,6 @@ def get_text_info(textid):
     info = collect_archive_text_info(metadata_file)
     return info
 
-
-# Looks for textid's metadata file, then generates from it a line
-# with author, date, title.
-@app.route('/textinfo/<textid>')
-def show_text_info(textid):
-    from flask import render_template
-    return render_template('textinfo.html', text_info=text_info)
 
 
 # Takes HOCR page and injects stylesheet call so that

@@ -2,29 +2,14 @@
 {% block title %}Index{% endblock %}
 {% block top %}
 {% include "textinfo.html" %}
-<p>OCR run: {{ date }}, with classifier: {{ classifier }} </p>
-<h1>Page {{ page_num_normalized }}</h1>
 {% include "pagination.html" %}
-<p>
-{% if page_before_exists %}
-<a id="prev" href='{{ page_before }}'>Prev</a> 
-{% else %}
-Prev
-{% endif %}
-
-{% if page_after_exists %}
-
-<a id='next' href='{{ page_after }}'>Next</a></p>
-{% else %}
-Next
-{% endif %}
-
 {% endblock %}
 {% block image_left %}
 <img id="page_image" src='{{ image_path }}' alt="photo"/>
 {% endblock %}
 {% block right_side %}
-<p>View: {{ view }}</p>
+<p class="data"><b>Run date: </b>{{ date }}</p>
+<p class="data"><b>View: </b>{{ view }}</p>
 <iframe  frameBorder="0" width="850px" height="1100px"
 src='{{ html_path }}'></iframe>
 {% endblock %}

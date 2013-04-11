@@ -26,6 +26,7 @@ span.ocr_word {
 body {
   font-family: 'GFS-Porson', 'New Athena Unicode', 'GFS Philostratos', 'GFS Porson', 'Cardo', serif;
   font-size: 16px;
+  background: #eec;
 }
 
 span.ocr_word:first-of-type {

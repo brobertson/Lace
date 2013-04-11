@@ -1,32 +1,28 @@
 @import url(http://fonts.googleapis.com/css?family=Junge);
 @import url("http://fonts.googleapis.com/css?family=Cardo");
-
-/* put hyphen in name to distinguish from regular font
-*/
-@font-face {
-    font-family: 'GFS-Porson';
-    src: url('http://heml.mta.ca/Rigaudon/fonts/porson/gfsporsonregular.eot');
-    src: url('http://heml.mta.ca/Rigaudon/fonts/porson/gfsporsonregular.eot?#iefix') format('embedded-opentype'),
-         url('http://heml.mta.ca/Rigaudon/fonts/porson/gfsporsonregular.woff') format('woff'),
-         url('http://heml.mta.ca/Rigaudon/fonts/porson/gfsporsonregular.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-
-    unicode-range:
-        U+0370–U+03FF,
-        U+1F00–U+1FFF;
-
-}
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans);
 
 body {
-  font-family: 'GFS-Porson', 'New Athena Unicode', 'GFS Philostratos', 'GFS Porson', 'Junge', serif;
+  font-family: 'Cardo', 'Junge', serif;
   font-size: 16px;
 }
 
+ div#banner { 
+/*       position: absolute; 
+       top: 0; 
+       left: 0; */
+       background-color: #666; 
+       width: 100%; 
+       color: #fff;
+       padding: 7px;
+       font-style: bold;
+	font-size: 14pt;
+     }
 
 #page_image{
         width: 50%;
         float:left;
+	margin-top: 10px;
         }
 #page_right{
         width: 50%;
@@ -37,19 +33,29 @@ font-size: 12pt;
 font-weight: bold; 
 text-align: left; 
 display:inline; 
-font-family: 'Junge', serif;
 }
-#next {
-  float:right;
-  margin-right:50pt;
-}
-#prev {
-  margin-left:50pt;
-}
+
 #footer {
 clear:both;
 /*background:#cc9;*/
 }
 p {
-font-family: 'Junge', serif;
+font-family: 'Cardo', serif;
+margin-bottom: 5px;
+margin-top: 0px;
+}
+
+h3.textinfo {
+/*	font-family: sans-serif; */
+	font-size: 12pt;
+	margin: 5px;
+	margin-top: 10px;
+}
+h3.textinfo a {
+	text-decoration: none;
+	color: inherit;
+}
+p.data {
+	font-family:'Droid Sans';
+	font-size: 10pt;
 }

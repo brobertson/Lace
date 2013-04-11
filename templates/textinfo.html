@@ -1,5 +1,5 @@
 {% if text_info %}
-  <h3>{{ text_info['creator'] }} ({{ text_info['date'] }}). <i>{{text_info['title']}} {{text_info['volume']}}.</h3>
+<h3 class="textinfo"><a href="http://www.archive.org/details/{{ text_id }}">{{ text_info['creator'] }} ({{ text_info['date'] }}). <i>{{text_info['title']}}</i> {{text_info['volume']}}</a></h3>
 {% else %}
   <h3>Error: text_info missing</h3>
 {% endif %}

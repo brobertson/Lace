@@ -1,9 +1,26 @@
-<ul id="pagination-clean">
-	<li class="previous{% if (not page_before_exists) %}-off{% endif %}"><a href="{{ page_before }}">«Previous</li>
+<div id="centeredmenu">
+<ul>
+	<li class="previous{% if (not page_before_exists) %}-off{% endif %}">
+	{% if page_before_exists %}
+	<a href="{{ page_before }}">
+		{% else %}
+	<a href="#">	
+		{% endif %}
+		«Previous
+	</a>
+		</li>
 
 {% for section in pagination_array %}
-<li><a href="{{ section[1] }}">{{ section[0] }}</a></li>
+<li {% if section[2] %}class="this"{% endif %}><a href="{{ section[1] }}">{{ section[0] }}</a></li>
 {% endfor %}
 <li class="next{% if (not page_after_exists) %}-off{% endif %}">
-<a href="{{ page_after }}">Next »</a></li>
+{% if page_after_exists %}
+<a href="{{ page_after }}">
+{% else %}
+<a href="#">
+{% endif %}
+Next »
+</a>
+</li>
 </ul>
+</div>
