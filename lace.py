@@ -27,8 +27,8 @@ def url_for_run_details(endpoint, run_details):
 def query():
     from flask import request
     run_details = {}
-    run_details['text_id'] = text_id = request.args.get('text_id', '')
-    run_details['page_num'] = page_num = request.args.get('page_num', '')
+    run_details['text_id'] = request.args.get('text_id', '')
+    run_details['page_num'] = request.args.get('page_num', '')
     run_details['classifier'] = request.args.get('classifier', '')
     run_details['date'] = request.args.get('date', '')
     run_details['view'] = request.args.get('view', '')
@@ -183,7 +183,6 @@ def collect_archive_text_info(archive_xml_file):
     from lxml import etree
     # returns dictionary with appropriate single-value strings
     info = {}
-    import lxml
     categories = ['creator', 'title', 'ppi',
                   'publisher', 'date', 'identifier-access', 'volume']
     tree = etree.parse(archive_xml_file)
