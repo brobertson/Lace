@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    .important { color: #336699; }
+  </style>
+{% endblock %}
+{% block top %}
+  <h1>Index</h1>
+  <h3 class="data">Pages: {{ page_count }}</h3>
+  <h3 class="data">Runs: {{ run_count }}</h3>
+{% endblock %}
+{% block right_side %}
+{% endblock %}

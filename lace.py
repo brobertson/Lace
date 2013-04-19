@@ -1,10 +1,10 @@
-from flask import Flask, url_for
+from flask import Flask, url_for, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from settings import APP_ROOT, POSSIBLE_HOCR_VIEWS
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/2test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/4test.db'
 db = SQLAlchemy(app)
-
+hocr_output_types = ['selected_hocr_output_spellchecked','selected_hocr_output','combined_hocr_output']
 #db models
 
 class Archivetext(db.Model):
@@ -16,6 +16,8 @@ class Archivetext(db.Model):
     title = db.Column(db.String(120), index = True, unique = False)
     volume = db.Column(db.String(120), index = True, unique = False)
     ppi = db.Column(db.String(120), index = True, unique = False)
+    #ocrrun_id = db.Column(db.Integer, db.ForeignKey('ocrrun.id'))
+    #ocrruns = db.relationship('Ocrrun', backref=db.backref('archivetext', lazy='dynamic'))
     def __repr__(self):
         return '<Archive_id %r>' % (self.archive_id)
 
@@ -36,7 +38,7 @@ class Outputpage(db.Model):
     output_type = db.Column(db.Integer, index = True, unique = False)
     page_number = db.Column(db.Integer, index = True, unique = False)
     threshold = db.Column(db.Integer, index = True, unique = False)
-    content = db.Column(db.String, index = False, unique = False)
+    relative_path = db.Column(db.String, index = False, unique = True)
     ocrrun_id = db.Column(db.Integer, db.ForeignKey('ocrrun.id'))
     ocrrun = db.relationship('Ocrrun', backref=db.backref('outputpages', lazy='dynamic'))
     def __repr__(self):
@@ -51,6 +53,15 @@ def index():
 @app.route('/about')
 def about():
     return index()
+
+
+@app.route('/stats')
+def stats():
+    from flask import render_template
+    text_count = len(Archivetext.query.all())
+    page_count = len(Outputpage.query.all())
+    run_count = len(Ocrrun.query.all())
+    return render_template('stats.html', text_count = text_count, page_count = page_count, run_count = run_count)
 
 
 def pad_page_num_for_archive(num):
@@ -161,20 +172,6 @@ def parse_path(textpath):
     # last_dir = os.path.dirname(textpath)
     return parse_dir(last_dir)
 
-def parse_dir(textdir):
-    for view in POSSIBLE_HOCR_VIEWS:
-        (before, sep, after) = textdir.partition('_' + view)
-        print
-        print before, sep, after
-        if sep:
-            parts = before.split('_')
-            date = parts[0]
-            classifier = '_'.join(parts[1:])
-            return (view, date, classifier)
-    raise ValueError(
-        "Path " + textdir + " cannot be parsed with given views.")
-
-
 
 def get_absolute_textpath(textpath):
     return APP_ROOT + '/static/Texts/' + textpath #url_for('static', filename="Texts/" + textpath)
@@ -211,27 +208,6 @@ def page_offset_exists(run_details, offset):
     return textfile_exists(textpath_for_run_details(run_details))
 
 
-@app.route('/text/<path:textpath>')
-def hello_world(textpath):
-    from lxml import etree
-    a = get_absolute_textpath(textpath)
-    print a
-    try:
-        tree = etree.parse(a)
-        root = tree.getroot()
-        head_element = tree.xpath("/html:html/html:head | /html/head",
-                                  namespaces={
-                                  'html': "http://www.w3.org/1999/xhtml"})[0]
-        css_file = url_for('static', filename='hocr.css')
-        style = etree.SubElement(
-            head_element, "link", rel="stylesheet", type="text/css",
-            href=css_file)
-        return etree.tostring(root, pretty_print=True)
-    except Exception as e:
-        return ""
-
-
-def get_text_info(textid):
     metadata_file = open(APP_ROOT + url_for(
         'static', filename="Metadata/" + textid + '_meta.xml'))
     info = collect_archive_text_info(metadata_file)
@@ -251,104 +227,63 @@ def runinfo():
     text_info = get_text_info(text_id)
     return render_template('run_info.html', text_id = text_id, date = date, classifier = classifier, text_info= text_info, info=info, path_to_3d = path_to_3d, path_to_chart = path_to_chart)
 
-# Takes HOCR page and injects stylesheet call so that
-# greek is handled by webfont GFS-Porson
-@app.route('/page/<path:page_path>')
+
+"""Database material here"""
+@app.route('/render_page', methods=['GET'])
+def render_page():
+    run = Ocrrun.query.filter_by(id = int(request.args.get('run_id',''))).first()
+    page = run.outputpages.first()#Outputpage.query.filter_by(ocrrun_id =  int(request.args.get('run_id',''))).first()
+    return hello_world(page.relative_path)
+
+
 def process_page(page_path):
     from flask import render_template
     return render_template('textinfo.html', name=page_path)
 
 
-def collect_archive_text_info(archive_xml_file):
-    from lxml import etree
-    # returns dictionary with appropriate single-value strings
-    info = {}
-    categories = ['creator', 'title', 'ppi',
-                  'publisher', 'date', 'identifier', 'volume']
-    tree = etree.parse(archive_xml_file)
-    for category in categories:
-        data = tree.xpath('/metadata/' + category + '/text()')
-        try:
-            info[category] = data[0]
-            if len(data) > 1:
-                info[category] = info[category] + ' et al.'
-        except IndexError:
-            info[category] =''
-    return info
+@app.route('/textinfo/<archive_id>')
+def get_text_info(archive_id):
+    from flask import render_template
+    info = Archivetext.query.filter_by(archive_id = archive_id).first()
+    return render_template('textinfo.html', text_info = info)
 
 @app.route('/catalog')
 def catalog():
     from flask import render_template
-    import os
-    works = []
-    text_dirs = os.listdir(os.path.dirname(get_absolute_textpath('')))
-    for text_dir in text_dirs:
-        text_id = os.path.basename(text_dir)
-        try:
-            text_info = get_text_info(text_id)
-            link = url_for('runs', text_id = text_id)
-            print link
-            text_info['link'] = link
-            works.append(text_info)
-        except:
-            pass
-    sorted_works = sorted(works, key=lambda work: work['creator'])
+    works = Archivetext.query.all()
+    sorted_works = sorted(works, key=lambda work: work.creator)
     return render_template('catalog.html', works = sorted_works)
 
-
-def get_runs(text_id):
-    import os
-    import glob
-    path_to_runs = get_absolute_textpath(text_id)
-    run_dirs = os.listdir(path_to_runs)
-    run_dirs = [elem for elem in run_dirs if 'output' in elem ]
-    run_dates = sorted(set([elem[0:16] for elem in run_dirs]))# gets uniq dates
-    print run_dates
-    run_info = []
-    for run_date in run_dates:
-        run = {}
-        run_details = {}
-        run['date'] = run_date
-        dir_for_glob =  path_to_runs + '/' + run_date
-        sel_hocr_dir_glob = dir_for_glob + '*selected_hocr_output'
-        sel_hocr_dir = glob.glob(sel_hocr_dir_glob)[0]
-        try:
-            score_file = open(sel_hocr_dir + '/best_scores_sum.txt')
-            run['score'] = score_file.read()
-        except IOError:
-            run['score'] = 0
-        (a,b,classifier) = parse_dir(sel_hocr_dir)
-        run['classifier'] = classifier
-        output_dirs = possible_output_dirs(dir_for_glob)
-        sel_hocr_dir_output = glob.glob(sel_hocr_dir + '/*html')
-        #but this is a filesystem directory, not a URL. We need to remove the path to 'static'
-        #first_output = first_output[len(APP_ROOT + '/static/Texts/'):]
-        run['link'] = ''#url_for('side_by_side_view', html_path = first_output)
-        if len(sel_hocr_dir_output) > 0:
-            run_info.append(run)
-        else:
-            print "there's nothing in", sel_hocr_dir
-        print run_info
-    sorted_run_info = sorted(run_info, reverse=True, key=lambda run: float(run['score']))
-    return (dir_for_glob, sorted_run_info)
 
 @app.route('/runs/<text_id>')
 def runs(text_id):
     from flask import render_template
-    (text_info, sorted_run_info) = get_runs(text_id)
-    return render_template('runs.html', text_info = text_info, runs = sorted_run_info)
+    text = Archivetext.query.filter_by(archive_id = text_id).first()
+    print "text id", text.id
+    runs = Ocrrun.query.filter_by(archivetext_id = text_id).all()
+    #runs = text.ocrruns.all()
+    print "runs: ", len(runs)
+    return render_template('runs.html', text_info = text, runs = runs)
 
-def possible_output_dirs(prefix):
-    import os
-    import glob
-    output = []
-    for view in POSSIBLE_HOCR_VIEWS:
-        try:
-            one_dir = glob.glob(prefix + '*' + view)[0]
-            output.append(one_dir)
-        except:
-            pass
-    return output
+
+@app.route('/text/<path:textpath>')
+def hello_world(textpath):
+    from lxml import etree
+    a = textpath#a = get_absolute_textpath(textpath)
+    print a
+    try:
+        tree = etree.parse(a)
+        root = tree.getroot()
+        head_element = tree.xpath("/html:html/html:head | /html/head",
+                                  namespaces={
+                                  'html': "http://www.w3.org/1999/xhtml"})[0]
+        css_file = url_for('static', filename='hocr.css')
+        style = etree.SubElement(
+            head_element, "link", rel="stylesheet", type="text/css",
+            href=css_file)
+        return etree.tostring(root, pretty_print=True)
+    except Exception as e:
+        return ""
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

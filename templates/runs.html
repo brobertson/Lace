@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block title %}Runs{% endblock %}
+{% block top %}
+{% include "textinfo.html" %}
+{% endblock %}
+{% block image_left %}
+<h3>Runs</h3>
+{% for run in runs %}
+<h3 class="data"><a href="/render_page?run_id={{run.id}}">{{ run.date }} <i>{{ run.classifier}}</i></a></h3>
+{% endfor %}
+{% endblock %}
+{% block right_side %}
+{% endblock %}
+~                

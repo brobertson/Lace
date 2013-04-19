@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block title %}Index{% endblock %}
+{% block top %}
+{% include "textinfo.html" %}
+<div class="line"/>
+{% endblock %}
+{% block image_left %}
+<h3 class='data'>Text id: {{ text_id }}</h3>
+	<h3 class='data'>Date: {{ date }}</h3>
+<h3 class='data'>Classifier: {{ classifier }}</h3>
+<pre>{{ info }}</pre>
+<h3 class='data'>Graphs</h3>
+<a href="{{ path_to_3d }}"><img class="chart" height="350" src="{{ path_to_3d }}"></a>
+<a herf="{{ path_to_chart }}"><img class="chart" height="350" src="{{ path_to_chart }}"/></a>
+{% endblock %}
+{% block right_side %}
+{% endblock %}
