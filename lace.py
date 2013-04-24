@@ -2,47 +2,61 @@ from flask import Flask, url_for, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from settings import APP_ROOT, POSSIBLE_HOCR_VIEWS
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/4test.db'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/6test.db'
+#app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+mysqlconnector://brucerob:lace@127.0.0.1:3306/lace"
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://brucerob:lace@127.0.0.1:3306/lace"
 db = SQLAlchemy(app)
-hocr_output_types = ['selected_hocr_output_spellchecked','selected_hocr_output','combined_hocr_output']
-#db models
 
 class Archivetext(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    archive_id = db.Column(db.String(64), index = True, unique = True)
+    archive_number = db.Column(db.String(64), index = True, unique = True)
     creator = db.Column(db.String(120), index = True, unique = False)
     publisher = db.Column(db.String(120), index = True, unique = False)
     date = db.Column(db.String(120), index = True, unique = False)
     title = db.Column(db.String(120), index = True, unique = False)
     volume = db.Column(db.String(120), index = True, unique = False)
     ppi = db.Column(db.String(120), index = True, unique = False)
+    ocrruns = db.relationship("Ocrrun", backref=db.backref('archivetext'))
     #ocrrun_id = db.Column(db.Integer, db.ForeignKey('ocrrun.id'))
     #ocrruns = db.relationship('Ocrrun', backref=db.backref('archivetext', lazy='dynamic'))
     def __repr__(self):
-        return '<Archive_id %r>' % (self.archive_id)
+        return '<Archive_id %r>' % (self.archive_number)
 
 class Ocrrun(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    archivetext_id = db.Column(db.Integer, db.ForeignKey('archivetext.id'))
     classifier = db.Column(db.String(64), index = True, unique = False)
     date = db.Column(db.String(120), index=True, unique = False)
-    archivetext = db.relationship('Archivetext',
-                                       backref=db.backref('ocrruns', lazy='dynamic'))#b_score = db.Column(db.Float, index = True, unique = False)
-
+    hocrtypes = db.relationship("Hocrtype", backref=db.backref('ocrrun'))
+    archivetext_id = db.Column(db.Integer, db.ForeignKey('archivetext.id'))
     def __repr__(self):
-         return '<Ocrrun %r>' % (self.archivetext + self.date)
+         return '<Ocrrun %r>' % (str(self.archivetext_id) + self.date)
+
+class Hocrtype(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    ocrrun_id = db.Column(db.Integer, db.ForeignKey('ocrrun.id'))
+    hocr_type = db.Column(db.Integer, index = True, unique = False)
+    outputpages = db.relationship("Outputpage", backref=db.backref('hocrtype'))
+    def hocr_type_string(self):
+        return POSSIBLE_HOCR_VIEWS[self.hocr_type]
+
+def int_for_hocr_type_string(hocr_type):
+    return POSSIBLE_HOCR_VIEWS.index(hocr_type)
+
+
+def string_for_hocr_type_int(hocr_int):
+    return POSSIBLE_HOCR_VIEWS[hocr_int]
+
 
 class Outputpage(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     b_score  =  db.Column(db.Float, index = True, unique = False)
-    output_type = db.Column(db.Integer, index = True, unique = False)
     page_number = db.Column(db.Integer, index = True, unique = False)
     threshold = db.Column(db.Integer, index = True, unique = False)
-    relative_path = db.Column(db.String, index = False, unique = True)
-    ocrrun_id = db.Column(db.Integer, db.ForeignKey('ocrrun.id'))
-    ocrrun = db.relationship('Ocrrun', backref=db.backref('outputpages', lazy='dynamic'))
+    hocrtype_id = db.Column(db.Integer, db.ForeignKey('hocrtype.id'))
+    relative_path = db.Column(db.String(200), index = False, unique = True)
     def __repr__(self):
         return '<Outputpage ' + str(ocrrun) + " " + str(output_type) + " " + str(page_number) + ">"
+
 
 @app.route('/')
 def index():
@@ -144,8 +158,8 @@ def side_by_side_view(html_path):
         return render_template('no_such_text_id.html', textid=text_id), 404
 
 
-def make_pagination_array(total, this_index, steps, html_path, sister_pages):
-    import os.path
+def make_pagination_array(this_run, this_page, steps):
+    sister_pages = Outputpage.query.filter_by(output_type = this_page.hocr_view).filter_by(ocrrun_id = this_run.id).order_by(Outputpage.page_number)
     stepsize = int(total / steps)
     my_place = (this_index / stepsize)
     pagination_array = []
@@ -158,10 +172,8 @@ def make_pagination_array(total, this_index, steps, html_path, sister_pages):
             current_index = stepsize * i
             is_current = False
         pagination_array.append([(current_index + 1),
-                                 url_for('side_by_side_view',
-                                 html_path=os.path.join(
-                                 os.path.dirname(html_path),
-                                 sister_pages[current_index])), is_current])
+                                 url_for('side_by_side_view2', text_id=text_id,run_date=this_run.date, page_number = page_number+1, hocr_view = this_page.hocr_view),
+                                  is_current])
     print pagination_array
     return pagination_array
 
@@ -231,8 +243,8 @@ def runinfo():
 """Database material here"""
 @app.route('/render_page', methods=['GET'])
 def render_page():
-    run = Ocrrun.query.filter_by(id = int(request.args.get('run_id',''))).first()
-    page = run.outputpages.first()#Outputpage.query.filter_by(ocrrun_id =  int(request.args.get('run_id',''))).first()
+    #run = Ocrrun.query.filter_by(id = int(request.args.get('run_id',''))).first()
+    page = run.outputpage.first()#Outputpage.query.filter_by(ocrrun_id =  int(request.args.get('run_id',''))).first()
     return hello_world(page.relative_path)
 
 
@@ -241,10 +253,10 @@ def process_page(page_path):
     return render_template('textinfo.html', name=page_path)
 
 
-@app.route('/textinfo/<archive_id>')
-def get_text_info(archive_id):
+@app.route('/textinfo/<archive_number>')
+def get_text_info(archive_number):
     from flask import render_template
-    info = Archivetext.query.filter_by(archive_id = archive_id).first()
+    info = Archivetext.query.filter_by(archive_number = archive_id).first()
     return render_template('textinfo.html', text_info = info)
 
 @app.route('/catalog')
@@ -258,12 +270,25 @@ def catalog():
 @app.route('/runs/<text_id>')
 def runs(text_id):
     from flask import render_template
-    text = Archivetext.query.filter_by(archive_id = text_id).first()
-    print "text id", text.id
-    runs = Ocrrun.query.filter_by(archivetext_id = text_id).all()
+    text = Archivetext.query.filter_by(archive_number = text_id).first()
+    print text
+    runs = text.ocrruns
+    #print "text id", text.id
+    #runs = Ocrrun.query.filter_by(archivetext_id = text_id).all()
     #runs = text.ocrruns.all()
     print "runs: ", len(runs)
-    return render_template('runs.html', text_info = text, runs = runs)
+    outputs_for_runs = []
+    for run in runs:
+        print run.date
+        print run.archivetext
+        outputs = []
+        for hocrtype in run.hocrtypes:
+            output_type = hocrtype.hocr_type_string()
+            print "\thas ", output_type
+            outputs.append(output_type)
+        outputs_for_runs.append((run,outputs))
+    print outputs_for_runs
+    return render_template('runs.html', text_info = text, runs = runs, outputs_for_runs = outputs_for_runs)
 
 
 @app.route('/text/<path:textpath>')
@@ -285,6 +310,47 @@ def hello_world(textpath):
     except Exception as e:
         return ""
 
+#text_id, run-date, page_number, hocr_view
+
+#def oossv(output_page):
+#    this_run =
+
+@app.route('/sidebysideview2', methods=['GET'])
+def side_by_side_view2(html_path):
+    from flask import render_template
+    this_run = Ocrrun.query.filter_by(date = run_date).first()
+    this_page = Outputpage.query.filter_by(output_type = hocr_view).filter_by(ocrrun_id = this_run.id).filter_by(page_number = page_number).one()
+    sister_pages = Outputpage.query.filter_by(output_type = hocr_view).filter_by(ocrrun_id = this_run.id).order_by(Outputpage.page_number)
+    print "sister page count:", len(sister_pages)
+    print "this page index: ", this_page_index
+    page_before_exists = (not page_number == 0)
+    page_after_exists = (not page_number == number_of_sister_pages)
+    if page_before_exists:
+        page_before = url_for('side_by_side_view2', text_id=text_id,run_date=run_date, page_number = page_number-1)
+    else:
+        page_before = None
+    if page_after_exists:
+        page_after = url_for('side_by_side_view2', text_id=text_id,run_date=run_date, page_number = page_number+1)
+    else:
+        page_after = None
+    pagination_array = make_pagination_array(this_run,this_page,25)
+    try:
+        text_info = get_text_info(text_id)
+        return render_template('sidebyside.html', html_path=html_url,
+                               text_id=text_id,
+                               text_info=text_info,
+                               image_path=
+                               url_for_page_image(text_id, page_num),
+                               classifier=classifier, date=date, view=view,
+                               page_num_normalized=int(page_num),
+                               page_after_exists=page_after_exists,
+                               page_before_exists=page_before_exists,
+                               page_before=page_before,
+                               page_after=page_after,
+                               pagination_array=pagination_array)
+    except IOError:
+        return render_template('no_such_text_id.html', textid=text_id), 404
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
-

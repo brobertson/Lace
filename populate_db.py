@@ -2,17 +2,27 @@ import lace
 from lace import Archivetext
 from lace import Ocrrun
 from lace import Outputpage
+from lace import Hocrtype
 from lace import db
 from lace import get_absolute_textpath
-from lace import POSSIBLE_HOCR_VIEWS
+from lace import POSSIBLE_HOCR_VIEWS, APP_ROOT, int_for_hocr_type_string, string_for_hocr_type_int
 import os
 import sys
 from lxml import etree
 import glob
 db.create_all()
 i = 0
-DEBUG =True
+DEBUG = True
 page_count = 0
+
+
+def int_for_hocr_type_string(hocr_type):
+    return POSSIBLE_HOCR_VIEWS.index(hocr_type)
+
+
+def string_for_hocr_type_int(hocr_int):
+    return POSSIBLE_HOCR_VIEWS[hocr_int]
+
 
 
 def possible_output_dirs(prefix):
@@ -97,22 +107,47 @@ def get_runs(text_id):
     return (path_to_runs + '/', sorted_run_info)
 
 
+def get_or_create(session, model, **kwargs):
+    instance = session.query(model).filter_by(**kwargs).first()
+    if instance:
+        return instance
+    else:
+        instance = model(**kwargs)
+        return instance
+
+
+def get_page_scores(run_dir_base, run):
+    score_file_path = run_dir_base +  run['date'] + '_' + run['classifier'] + '_selected_text_output' + '/' + run['date'] + '_' + run['classifier'] + '_summary.csv'
+    print score_file_path
+    page_scores = {}
+    score_file = open(score_file_path)
+    for line in score_file.readlines():
+        (file_name,value) = line.split(',')
+        file_name = file_name.split('/')[-1]
+        file_name = file_name[:-9] + '.html'
+        page_scores[file_name] = float(value)
+    return page_scores
+
+
+
+
+print "possible hocr views:", POSSIBLE_HOCR_VIEWS
 for meta_file in os.listdir(sys.argv[1]):
     print i, meta_file
     text_info = collect_archive_text_info(os.path.join(sys.argv[1] + meta_file))
-    existing_text_info_record = db.session.query(Archivetext).filter_by(archive_id=text_info['identifier']).first()
-    if not existing_text_info_record:
+    t = db.session.query(Archivetext).filter_by(archive_number=text_info['identifier']).first()
+    if not t:
         t = Archivetext(title = text_info['title'], creator = text_info['creator'], publisher = text_info['publisher'],
-                    date = text_info['date'], archive_id = text_info['identifier'], ppi = text_info['ppi'],
+                    date = text_info['date'], archive_number = text_info['identifier'], ppi = text_info['ppi'],
                                volume = text_info['volume'])
         try:
             db.session.add(t)
-            #db.session.commit()
+            db.session.commit()
         except SQLAlchemyError:
             db.session.rollback()
     else:
         print "There is already a record for", text_info['identifier'], ". Therefore not loading this..."
-    (run_dir_base,runs) = get_runs(text_info['identifier'])
+    #(run_dir_base,runs) = get_runs(text_info['identifier'])
     try:
         (run_dir_base,runs) = get_runs(text_info['identifier'])
         if DEBUG:
@@ -123,9 +158,10 @@ for meta_file in os.listdir(sys.argv[1]):
         runs = None#raise
     if (runs):
         for run in runs:
-            r = db.session.query(Ocrrun).filter_by(archivetext_id = text_info['identifier']).filter_by(date=run['date']).first()
+            page_scores = get_page_scores(run_dir_base,run)
+            r = db.session.query(Ocrrun).filter_by(archivetext_id = t.id).filter_by(date=run['date']).first()
             if not r:
-                r = Ocrrun(archivetext_id = text_info['identifier'], classifier = run['classifier'], date = run['date'])
+                r = Ocrrun(archivetext_id = t.id, classifier = run['classifier'], date = run['date'])
                 try:
                     db.session.add(r)
                     db.session.commit()
@@ -134,7 +170,7 @@ for meta_file in os.listdir(sys.argv[1]):
                     raise
             else:
                 print "there is already a run for", text_info['identifier'], "on", run['date'], "with classifier", run['classifier'], ". Therefore not loading into db"
-            for output_type in ['selected_hocr_output_spellchecked','selected_hocr_output','combined_hocr_output']:
+            for output_type in POSSIBLE_HOCR_VIEWS:
                 trial_glob_file = run_dir_base + run['date'] + '*_' + output_type
                 print 'trial_glob_file', trial_glob_file
                 a_hocr_dir = ''
@@ -145,6 +181,15 @@ for meta_file in os.listdir(sys.argv[1]):
                 except:
                     print 'no data for', trial_glob_file
                 if a_hocr_dir:
+                    type_int = int_for_hocr_type_string(output_type)
+                    h = db.session.query(Hocrtype).filter_by(hocr_type = type_int).filter_by(ocrrun_id = r.id).first()
+                    if not h:
+                        h = Hocrtype(hocr_type = type_int, ocrrun_id = r.id)
+                        try:
+                            db.session.add(h)
+                            db.session.commit()
+                        except:
+                            raise
                     hocr_files = glob.glob(a_hocr_dir + '/' + '*.html')
                     hocr_files.sort()
                     for file_name in hocr_files:
@@ -169,16 +214,14 @@ for meta_file in os.listdir(sys.argv[1]):
                                 print "can't parse filename:", file_name, "skipping this file..."
                                 acceptable_file = False
                         if acceptable_file:
-                            try:
-                                import codecs
-                                content = codecs.open(file_name, encoding="utf-8").read()
-                            except:
-                                print "can't read file:", file_name, "skipping this file..."
-                                acceptable_file = False
-                        if acceptable_file:
-                            existing_page = db.session.query(Outputpage).filter_by(ocrrun_id = r.id).filter_by(output_type = output_type).filter_by(page_number = page_number).first()
+                            existing_page = db.session.query(Outputpage).filter_by(hocrtype_id = h.id).filter_by(page_number = page_number).first()
                             if not existing_page:
-                                p =  Outputpage(relative_path = file_name, page_number = page_number, output_type = output_type, ocrrun_id = r.id, threshold = 0)
+                                relative_path = file_name.replace(APP_ROOT + '/','')
+                                try:
+                                    page_score=page_scores[relative_path.split('/')[-1]]
+                                except KeyError:
+                                    page_score='-1.0'
+                                p =  Outputpage(relative_path = relative_path, page_number = page_number, hocrtype_id = h.id, threshold = thresh_value,b_score= page_score)
                                 try:
                                     db.session.add(p)
                                     page_count = page_count + 1#db.session.commit()

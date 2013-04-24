@@ -5,8 +5,18 @@
 {% endblock %}
 {% block image_left %}
 <h3>Runs</h3>
-{% for run in runs %}
-<h3 class="data"><a href="/render_page?run_id={{run.id}}">{{ run.date }} <i>{{ run.classifier}}</i></a></h3>
+{% for run in outputs_for_runs %}
+<h3 class="data"><a href="/render_page?run_id={{run[0].id}}">{{ run[0].date }} <i>{{ run[0].classifier}}</i></a> </h3>
+<!--ul>
+{% for output_type in run[1] %}
+ <li>{{output_type}}</li>
+ {% endfor %}
+ </ul-->
+ <ul>
+{% for hocrtype in run[0].hocrtypes %}
+<li>{{hocrtype.hocr_type_string()}}</li>
+{% endfor %}
+</ul>
 {% endfor %}
 {% endblock %}
 {% block right_side %}

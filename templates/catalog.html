@@ -4,7 +4,7 @@
 {% endblock %}
 {% block image_left %}
 {% for work in works %}
-<h3 class="textinfo"><a href="/runs/{{work.archive_id}}">{{ work.creator }} ({{ work.date }}). <i>{{work.title}}</i> {{work.volume}}</a></h3>
+<h3 class="textinfo"><a href="/runs/{{work.archive_number}}">{{ work.creator }} ({{ work.date }}). <i>{{work.title}}</i> {{work.volume}}</a></h3>
 {% endfor %}
 {% endblock %}
 {% block right_side %}
