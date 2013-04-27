@@ -8,9 +8,9 @@
 <img id="page_image" src='{{ image_path }}' alt="photo"/>
 {% endblock %}
 {% block right_side %}
-<p class="data"><b>Run date: </b>{{ date }}</p>
-<p class="data"><b>View: </b>{{ view }}</p>
-<p class="data"><b>Classifier: </b>{{ classifier }}</p>
+<p class="data"><b>Run date: </b>{{ this_page.hocrtype.ocrrun.date }}</p>
+<p class="data"><b>View: </b>{{ this_page.hocrtype.hocr_type_string() }}</p>
+<p class="data"><b>Classifier: </b>{{ this_page.hocrtype.ocrrun.classifier }}</p>
 <iframe  frameBorder="0" width="850px" height="1100px"
-src='{{ html_path }}'></iframe>
+src='{{ html_url }}'></iframe>
 {% endblock %}

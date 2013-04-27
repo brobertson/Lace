@@ -1,23 +1,34 @@
 {% extends "layout.html" %}
+{% block scripts %}
+<!-- I plan to put scripts here -->
+<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <script type='text/javascript'>
+      google.load('visualization', '1', {packages:['table']});
+      google.setOnLoadCallback(drawTable);
+      function drawTable() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Date');
+        data.addColumn('number', 'B-score');
+        data.addColumn('string', 'Classifier');
+	data.addColumn('string', 'Available Output');
+        data.addRows([
+{% for run in text_info.ocrruns %}
+['<a href="/render_page?hocrtype_id={{run.prefered_hocrtype().id}}">{{ run.date }}</a>', {{ run.total_b_score() }}, '{{ run.classifier }}', '{% for hocrtype in run.hocrtypes %}<a href="/render_page?hocrtype_id={{hocrtype.id}}">{{hocrtype.hocr_type_string()}}</a><br/>{% endfor %}'],
+{% endfor %}
+        ]);
+
+        var table = new google.visualization.Table(document.getElementById('table_div'));
+	table.draw(data, {allowHtml: true,'width': 900,cssClassNames:  {headerRow: 'headerRow', tableRow: 'tableRow'}});
+      }
+    </script>
+{% endblock %}
 {% block title %}Runs{% endblock %}
 {% block top %}
 {% include "textinfo.html" %}
 {% endblock %}
 {% block image_left %}
 <h3>Runs</h3>
-{% for run in outputs_for_runs %}
-<h3 class="data"><a href="/render_page?run_id={{run[0].id}}">{{ run[0].date }} <i>{{ run[0].classifier}}</i></a> </h3>
-<!--ul>
-{% for output_type in run[1] %}
- <li>{{output_type}}</li>
- {% endfor %}
- </ul-->
- <ul>
-{% for hocrtype in run[0].hocrtypes %}
-<li>{{hocrtype.hocr_type_string()}}</li>
-{% endfor %}
-</ul>
-{% endfor %}
+ <div id='table_div'></div>
 {% endblock %}
 {% block right_side %}
 {% endblock %}
