@@ -17,6 +17,16 @@ body {
   font-size: 16px;
 }
 
+tr.headerRow {  
+	font-family: 'Droid Sans';
+	font-weight: bold;
+	font-size: 16px;
+  }
+
+tr.tableRow {
+	font-family: 'Droid Sans';
+	font-size: 12px;
+}
 h3.data {
 	font-family: "Droid Sans";
 	font-size: 10pt;
@@ -72,6 +82,7 @@ clear:both;
 }
 p {
 font-family: 'Cardo', serif;
+font-size: 9pt;
 margin-bottom: 5px;
 margin-top: 0px;
 }
