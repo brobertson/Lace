@@ -13,7 +13,7 @@
 	data.addColumn('string', 'Available Output');
         data.addRows([
 {% for run in text_info.ocrruns %}
-['<a href="/render_page?hocrtype_id={{run.prefered_hocrtype().id}}">{{ run.date }}</a>', {{ run.total_b_score() }}, '{{ run.classifier }}', '{% for hocrtype in run.hocrtypes %}<a href="/render_page?hocrtype_id={{hocrtype.id}}">{{hocrtype.hocr_type_string()}}</a><br/>{% endfor %}'],
+['<a href="{{ url_for('render_page',hocrtype_id=run.prefered_hocrtype().id)}}">{{ run.date }}</a>', {{ run.total_b_score() }}, '{{ run.classifier }}', '{% for hocrtype in run.hocrtypes %}<a href="{{ url_for('render_page',hocrtype_id=hocrtype.id)}}">{{hocrtype.hocr_type_string()}}</a><br/>{% endfor %}'],
 {% endfor %}
         ]);
 

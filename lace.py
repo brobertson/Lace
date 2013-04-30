@@ -105,7 +105,7 @@ def pad_page_num_for_archive(num):
 
 
 def url_for_page_image(text_id, page_num):
-    file_address = 'Images/' + text_id + \
+    file_address = 'Images/Color/' + text_id + \
         '_color/' + text_id + '_' + pad_page_num_for_archive(str(page_num)) + '.jpg'
     return url_for('static', filename=file_address)
 
@@ -267,8 +267,6 @@ def render_page():
     pages = hocrtype.outputpages
     half_way = int(len(pages) / 2)
     page = hocrtype.outputpages[half_way]#Outputpage.query.filter_by(ocrrun_id =  int(request.args.get('run_id',''))).first()
-    print page.relative_path
-    #return hello_world(page.relative_path)
     return side_by_side_view2(page.id)
 
 def process_page(page_path):
@@ -318,11 +316,10 @@ def runs(text_id):
 
 @app.route('/text/<path:textpath>')
 def hello_world(textpath):
+    from local_settings import textpath_root
     from lxml import etree
-    #textpath = '/'.join(textpath.split('/')[1:])
-    print "textpath",textpath
-    a = open(textpath) #url_for('static', filename=textpath,_external=True)#a = get_absolute_textpath(textpath)
-    print a
+    a =  open(textpath_root+textpath)#a = get_absolute_textpath(textpath)
+    print "app root: ", APP_ROOT
     try:
         tree = etree.parse(a)
         root = tree.getroot()
@@ -335,7 +332,8 @@ def hello_world(textpath):
             href=css_file)
         return etree.tostring(root, pretty_print=True)
     except Exception as e:
-        return ""
+        print "We're upset about:", e
+        pass
 
 #text_id, run-date, page_number, hocr_view
 
@@ -344,17 +342,12 @@ def side_by_side_view2(outputpage_id):
     from flask import render_template
     this_page = Outputpage.query.filter_by(id = outputpage_id).first()
     text_id = this_page.hocrtype.ocrrun.archivetext.archive_number
-    print text_id
     page_num = this_page.page_number
-    print page_num
     sister_outputpages = this_page.hocrtype.outputpages
     number_of_sister_pages = len(sister_outputpages)
-    print "sister page count:", number_of_sister_pages
     sorted_sister_outputpages = sorted(sister_outputpages, key=lambda outputpage: outputpage.threshold)
     sorted_sister_outputpages = sorted(sorted_sister_outputpages, key=lambda outputpage: outputpage.page_number)
     this_page_index = sorted_sister_outputpages.index(this_page)
-    print "this page index: ", this_page_index
-    print
     page_before_exists = (not this_page_index == 0)
     page_after_exists = (not this_page_index == number_of_sister_pages)
     if page_before_exists:
@@ -368,7 +361,6 @@ def side_by_side_view2(outputpage_id):
     else:
         page_after = None
     pagination_array = make_pagination_array(sorted_sister_outputpages,this_page,25)
-    print "url for page image: ", url_for_page_image(text_id, page_num)
     try:
         return render_template('sidebyside.html',
                                this_page = this_page,
