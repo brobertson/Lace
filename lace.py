@@ -1,10 +1,11 @@
 from flask import Flask, url_for, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from settings import APP_ROOT, POSSIBLE_HOCR_VIEWS,PREFERENCE_OF_HOCR_VIEWS
+from local_settings import database_uri
 app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/6test.db'
 #app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+mysqlconnector://brucerob:lace@127.0.0.1:3306/lace"
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://brucerob:lace@127.0.0.1:3306/lace"
+app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 db = SQLAlchemy(app)
 
 class Archivetext(db.Model):
@@ -318,7 +319,9 @@ def runs(text_id):
 @app.route('/text/<path:textpath>')
 def hello_world(textpath):
     from lxml import etree
-    a = textpath#a = get_absolute_textpath(textpath)
+    #textpath = '/'.join(textpath.split('/')[1:])
+    print "textpath",textpath
+    a = open(textpath) #url_for('static', filename=textpath,_external=True)#a = get_absolute_textpath(textpath)
     print a
     try:
         tree = etree.parse(a)
