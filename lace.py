@@ -92,9 +92,9 @@ def about():
 @app.route('/stats')
 def stats():
     from flask import render_template
-    text_count = len(Archivetext.query.all())
-    page_count = len(Outputpage.query.all())
-    run_count = len(Ocrrun.query.all())
+    text_count = Archivetext.query.count()
+    page_count = Outputpage.query.count()
+    run_count = Ocrrun.query.count()
     return render_template('stats.html', text_count = text_count, page_count = page_count, run_count = run_count)
 
 
