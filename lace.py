@@ -229,9 +229,10 @@ def get_latest_run(archivetext):
 
 def get_best_b_score(archivetext):
     ocrruns = archivetext.ocrruns
-    print "guessing at length:", len(ocrruns[0].prefered_hocrtype().outputpages)
-    sorted_ocrruns = sorted(ocrruns, key=lambda ocrrun: (ocrrun.total_b_score()/float(len(ocrrun.prefered_hocrtype().outputpages)+0.001)), reverse=True)
-    return (sorted_ocrruns[0].total_b_score()/float(len(sorted_ocrruns[0].prefered_hocrtype().outputpages)+0.001))
+    length = len(ocrruns[0].prefered_hocrtype().outputpages)
+    print "guessing at length:", length
+    sorted_ocrruns = sorted(ocrruns, key=lambda ocrrun: (ocrrun.total_b_score()/float(length+0.001)), reverse=True)
+    return (sorted_ocrruns[0].total_b_score()/float(length+0.001))
 @app.route('/runs/<text_id>')
 def runs(text_id):
     from flask import render_template
