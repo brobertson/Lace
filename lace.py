@@ -3,8 +3,6 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from settings import APP_ROOT, POSSIBLE_HOCR_VIEWS,PREFERENCE_OF_HOCR_VIEWS
 from local_settings import database_uri
 app = Flask(__name__)
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/6test.db'
-#app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+mysqlconnector://brucerob:lace@127.0.0.1:3306/lace"
 app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 db = SQLAlchemy(app)
 
@@ -129,57 +127,6 @@ def query():
     html_path = textpath_for_run_details(run_details)
     return side_by_side_view(html_path)
 
-
-@app.route('/sidebysideview/<path:html_path>')
-def side_by_side_view(html_path):
-    from flask import render_template
-    sp = get_sister_pages(html_path)
-    number_of_sister_pages = len(sp)
-    import os.path
-    filename = os.path.basename(html_path)
-    this_page_index = sp.index(filename)
-    # TODO figure out how to use url_for here:
-    html_url = '/text/' + html_path
-    print "this page index: ", this_page_index
-    page_before_exists = (not this_page_index == 0)
-    page_after_exists = (not this_page_index == number_of_sister_pages)
-    if page_before_exists:
-        page_before = url_for('side_by_side_view', html_path=os.path.join(
-            os.path.dirname(html_path), sp[this_page_index - 1]))
-    else:
-        page_before = None
-    if page_after_exists:
-        page_after = url_for('side_by_side_view', html_path=os.path.join(
-            os.path.dirname(html_path), sp[this_page_index + 1]))
-    else:
-        page_after = None
-    try:
-        (text_id, page_num) = filename.split('_')
-        page_num = page_num[0:-5]
-    except ValueError:
-        (long_text_id, page_num, file_type, thresh, threshvalue) = filename.split('_')
-        text_id = long_text_id[7:]
-    (view, date, classifier) = parse_path(html_path)
-    pagination_array = make_pagination_array(
-        number_of_sister_pages, this_page_index, 25, html_path, sp)
-    try:
-        text_info = get_text_info(text_id)
-        return render_template('sidebyside.html', html_path=html_url,
-                               text_id=text_id,
-                               text_info=text_info,
-                               image_path=
-                               url_for_page_image(text_id, page_num),
-                               classifier=classifier, date=date, view=view,
-                               page_num_normalized=int(page_num),
-                               page_after_exists=page_after_exists,
-                               page_before_exists=page_before_exists,
-                               page_before=page_before,
-                               page_after=page_after,
-                               pagination_array=pagination_array)
-    except IOError:
-        return render_template('no_such_text_id.html', textid=text_id), 404
-
-
 def make_pagination_array(sister_outputpages, this_page, steps):
     this_index = sister_outputpages.index(this_page)
     stepsize = int(len(sister_outputpages)/ steps)
@@ -239,27 +186,6 @@ def page_offset_exists(run_details, offset):
     run_details = page_offset(run_details, offset)
     return textfile_exists(textpath_for_run_details(run_details))
 
-
-    metadata_file = open(APP_ROOT + url_for(
-        'static', filename="Metadata/" + textid + '_meta.xml'))
-    info = collect_archive_text_info(metadata_file)
-    return info
-
-@app.route('/runinfo', methods=['GET'])
-def runinfo():
-    from flask import request, render_template
-    text_id = request.args.get('text_id', '')
-    date = request.args.get('date', '')
-    classifier = request.args.get('classifier', '')
-    path_to_info = text_id + '/' + date + '_' + classifier + '_selected_hocr_output/info.txt'
-    path_to_3d =  url_for('static', filename='Texts/' + text_id + '/' + date + '_' + classifier + '_selected_hocr_output/3d.png')
-    path_to_chart = url_for('static', filename='Texts/' + text_id + '/' + date + '_' + classifier + '_selected_hocr_output/' + date  + '_' + classifier + '_summary.png')
-    info_file = open(get_absolute_textpath(path_to_info))
-    info = info_file.read()
-    text_info = get_text_info(text_id)
-    return render_template('run_info.html', text_id = text_id, date = date, classifier = classifier, text_info= text_info, info=info, path_to_3d = path_to_3d, path_to_chart = path_to_chart)
-
-
 """Database material here"""
 @app.route('/render_page', methods=['GET'])
 def render_page():
@@ -318,7 +244,7 @@ def runs(text_id):
 def hello_world(textpath):
     from local_settings import textpath_root
     from lxml import etree
-    a =  open(textpath_root+textpath)#a = get_absolute_textpath(textpath)
+    a =  open(textpath_root+textpath)
     print "app root: ", APP_ROOT
     try:
         tree = etree.parse(a)
@@ -334,8 +260,6 @@ def hello_world(textpath):
     except Exception as e:
         print "We're upset about:", e
         pass
-
-#text_id, run-date, page_number, hocr_view
 
 @app.route('/sidebysideview2/<outputpage_id>')
 def side_by_side_view2(outputpage_id):
