@@ -76,15 +76,23 @@ text-align: left;
 display:inline; 
 }
 
+h2 {
+	font-size: 14pt;
+}
 #footer {
 clear:both;
 /*background:#cc9;*/
 }
+
+#footer p {
+font-size: 10pt;
+}
+
 p {
 font-family: 'Cardo', serif;
-font-size: 9pt;
+font-size: 12pt;
 margin-bottom: 5px;
-margin-top: 0px;
+margin-top: 10px;
 }
 
 h3.textinfo {
@@ -105,3 +113,14 @@ p.data {
 img.chart {
 	border:1px solid #222;
 }
+a:link {
+	color:#000080;
+	text-decoration:none;
+}
+
+a:visited {
+	color:#666666;
+	text-decoration: none;
+}
+a:hover {text-decoration:underline;}
+a:active {text-decoration:underline;}

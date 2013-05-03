@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    .important { color: #336699; }
+  </style>
+{% endblock %}
+{% block top %}
+{% filter markdown %}
+Requests
+--------
+We are happy to try to process jobs of interest to other scholars. Please append the archive.org text identifier to our public [request spreadsheet](https://docs.google.com/spreadsheet/ccc?key=0ArJt01185Q8mdERsS2VRMngtTWRNUDAtNGFxZXhFQVE#gid=0). Note that at present we are unlikely to get good results from black-and-white ('binarized') page images, or from the low-ish resolution of text that derive from Google Books. 
+{% endfilter %}
+{% endblock %}
+{% block right_side %}
+{% endblock %}

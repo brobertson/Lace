@@ -7,10 +7,15 @@
   </style>
 {% endblock %}
 {% block top %}
-  <h1>Index</h1>
-  <p class="important">
-    Welcome on my awesome homepage.
+{% filter markdown %}
+Bruce Robertson
+---------------
+Bruce Robertson is Head of the Department of Classics at Mount Allison University in Canada. 
+
+Federico Boschetti
+------------------
+
+{% endfilter %}
 {% endblock %}
 {% block right_side %}
- <p> Is this on the right side?</p>
 {% endblock %}

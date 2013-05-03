@@ -2,7 +2,9 @@ from flask import Flask, url_for, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from settings import APP_ROOT, POSSIBLE_HOCR_VIEWS,PREFERENCE_OF_HOCR_VIEWS
 from local_settings import database_uri
+from flaskext.markdown import Markdown
 app = Flask(__name__)
+Markdown(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 db = SQLAlchemy(app)
 
@@ -81,12 +83,15 @@ class Outputpage(db.Model):
 @app.route('/')
 def index():
     from flask import render_template
-    return render_template('basic.html', name="foo")
+    works = Archivetext.query.all()
+    works = [work for work in works if work.ocrruns]
+    return render_template('index.html',volume_count=len(works),page_count = Outputpage.query.count())
 
 
 @app.route('/about')
 def about():
-    return index()
+    from flask import render_template
+    return render_template('about.html')
 
 
 @app.route('/stats')
@@ -97,6 +102,16 @@ def stats():
     run_count = Ocrrun.query.count()
     return render_template('stats.html', text_count = text_count, page_count = page_count, run_count = run_count)
 
+
+@app.route('/search')
+def search():
+    from flask import render_template
+    return render_template('search.html')
+
+@app.route('/requests')
+def requests():
+    from flask import render_template
+    return render_template('requests.html')
 
 def pad_page_num_for_archive(num):
     return num.zfill(4)

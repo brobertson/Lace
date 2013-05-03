@@ -17,7 +17,7 @@
 {% endblock %}
 </head>
 <body>
-	<div id="banner"><span><a href="{{url_for('index')}}">Rigaudon: Polytonic Greek OCR</a></span><span class="lesser"><a href="{{url_for('catalog')}}">Texts</a></span><span class="lesser"><a href="{{url_for('about')}}">About</a></span></div>
+	<div id="banner"><span><a href="{{url_for('index')}}">Rigaudon: Polytonic Greek OCR</a></span><span class="lesser"><a href="{{url_for('catalog')}}">Texts</a></span><span class="lesser"><a href="{{url_for('about')}}">About Us</a></span><span class="lesser"><a href="{{url_for('search')}}">Search</a></span><span class="lesser"><a href="{{url_for('requests')}}">Requests</a></span></div>
 {% block top %}
 {% if text_info %}
   <h1>{{ text_info['title'] }}</h1>
@@ -32,7 +32,7 @@
 <div id="page_right">
 {% block right_side %}{% endblock %}
 </div>
-<div id="footer"><p>Copyright 2013, Bruce Robertson, Dept. of Classics, Mount Allison University and Federico Boschetti, ILC-CNR, Pisa. <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/80x15.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</p></div>
+<div id="footer"><p>Copyright 2013, Bruce Robertson, Dept. of Classics, Mount Allison University and Federico Boschetti, ILC-CNR, Pisa. <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/80x15.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</p>
 <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
 </script>
 <script type="text/javascript">
@@ -40,6 +40,7 @@ _uacct = "UA-6521346-1";
 urchinTracker();
 </script>
 <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
-<div class="g-plusone" data-size="tall"></div>
+<span class="g-plusone" data-size="small"></span>
+</div>
 </body>
 </html>
