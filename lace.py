@@ -99,8 +99,12 @@ def stats():
     from flask import render_template
     text_count = Archivetext.query.count()
     page_count = Outputpage.query.count()
+    combined_hocr_types = Hocrtype.query.filter(Hocrtype.hocr_type == int_for_hocr_type_string('combined_hocr_output')).all()
+    total = 0
+    for cht in combined_hocr_types:
+        total = total + len(cht.outputpages)
     run_count = Ocrrun.query.count()
-    return render_template('stats.html', text_count = text_count, page_count = page_count, run_count = run_count)
+    return render_template('stats.html', text_count = text_count, page_count = page_count, run_count = run_count, unique_page_count = total)
 
 
 @app.route('/search')
