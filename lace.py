@@ -229,15 +229,24 @@ def get_text_info(archive_number):
 def catalog():
     from flask import render_template
     sort_by = request.args.get('sort_by')
+    reverse = bool(request.args.get('reverse'))
+    if not reverse:
+        if sort_by == quality:
+            reverse = True
+        else:
+            reverse = False
+    limit = int(request.args.get('limit'))
     works = Archivetext.query.all()
     works = [work for work in works if work.ocrruns]
     sorted_works = sorted(works, key=lambda work: work.creator)
     if sort_by == 'date':
         sorted_works = sorted(works, key=lambda work: work.date)
     if sort_by == 'run_date':
-        sorted_works = sorted(works, key=get_latest_run)
+        sorted_works = sorted(works, key=get_latest_run, reverse=reverse)
     if sort_by == 'quality':
-        sorted_works = sorted(works, key=get_best_b_score, reverse=True)
+        sorted_works = sorted(works, key=get_best_b_score, reverse=reverse)
+    if limit:
+        sorted_works = sorted_works[0:limit]
     work_count = len(works)
     return render_template('catalog.html', works = sorted_works, work_count = work_count)
 
