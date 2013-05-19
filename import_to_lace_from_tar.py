@@ -130,7 +130,7 @@ for file_in in sys.argv[1:]:
                             except:
                                 raise
         db.session.commit()
-        os.rename(file_in, file_in + '-processed')
+    os.rename(file_in, file_in + '-processed')
 
 
 
