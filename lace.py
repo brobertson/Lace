@@ -225,9 +225,11 @@ def get_text_info(archive_number):
     info = Archivetext.query.filter_by(archive_number = archive_number).first()
     return render_template('textinfo.html', text_info = info)
 
+
 @app.route('/catalog', methods=['GET'])
 def catalog():
     from flask import render_template
+    print request
     sort_by = request.args.get('sort_by')
     reverse = bool(request.args.get('reverse'))
     if not reverse:
@@ -235,7 +237,29 @@ def catalog():
             reverse = True
         else:
             reverse = False
-    limit = int(request.args.get('limit'))
+    limit_str = request.args.get('limit')
+    if request.args.get('limit'):
+        limit = int(request.args.get('limit'))
+    else:
+        limit = None
+    works = catalog_base(sort_by, reverse, limit)
+    work_count = len(works)
+    return render_template('catalog.html', works = works, work_count = work_count)
+
+
+@app.route('/latest')
+def latest():
+    from flask import render_template
+    works = catalog_base('run_date', True, 5)
+    work_count = len(works)
+    dates = []
+    for work in works:
+        work.run_date = get_latest_run(work)
+        print work.run_date
+    return render_template('latest.html', works = works, work_count = work_count)
+
+
+def catalog_base(sort_by, reverse, limit):
     works = Archivetext.query.all()
     works = [work for work in works if work.ocrruns]
     sorted_works = sorted(works, key=lambda work: work.creator)
@@ -247,13 +271,13 @@ def catalog():
         sorted_works = sorted(works, key=get_best_b_score, reverse=reverse)
     if limit:
         sorted_works = sorted_works[0:limit]
-    work_count = len(works)
-    return render_template('catalog.html', works = sorted_works, work_count = work_count)
+    return  sorted_works
 
 def get_latest_run(archivetext):
     ocrruns = archivetext.ocrruns
     sorted_ocrruns = sorted(ocrruns, key=lambda ocrrun: ocrrun.date, reverse=True)
     return sorted_ocrruns[0].date
+
 
 def get_best_b_score(archivetext):
     ocrruns = archivetext.ocrruns
@@ -261,6 +285,8 @@ def get_best_b_score(archivetext):
     print "guessing at length:", length
     sorted_ocrruns = sorted(ocrruns, key=lambda ocrrun: (ocrrun.total_b_score()/float(length+0.001)), reverse=True)
     return (sorted_ocrruns[0].total_b_score()/float(length+0.001))
+
+
 @app.route('/runs/<text_id>')
 def runs(text_id):
     from flask import render_template

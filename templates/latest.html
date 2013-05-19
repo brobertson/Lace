@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block title %}{{work_count}} Texts{% endblock %}
+{% block top %}
+{% endblock %}
+{% block image_left %}
+<h2>Most Recently Processed Texts</h2>
+{% for work in works %}
+<h3 class="textinfo">{{ work.run_date }} <a href="{{ url_for('runs', text_id=work.archive_number) }}">{{ work.creator }} ({{ work.date }}). <i>{{work.title}}</i> {{work.volume}}</a></h3>
+{% endfor %}
+{% endblock %}
+{% block right_side %}
+{% endblock %}
+~                
