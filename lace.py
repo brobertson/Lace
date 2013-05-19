@@ -233,7 +233,7 @@ def catalog():
     sort_by = request.args.get('sort_by')
     reverse = bool(request.args.get('reverse'))
     if not reverse:
-        if sort_by == quality:
+        if sort_by == 'quality':
             reverse = True
         else:
             reverse = False
