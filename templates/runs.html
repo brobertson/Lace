@@ -18,7 +18,7 @@
         ]);
 
         var table = new google.visualization.Table(document.getElementById('table_div'));
-	table.draw(data, {allowHtml: true,'width': 900,cssClassNames:  {headerRow: 'headerRow', tableRow: 'tableRow'}});
+	table.draw(data, {sortColumn: 0, sortAscending: false, allowHtml: true,'width': 900,cssClassNames:  {headerRow: 'headerRow', tableRow: 'tableRow'}});
       }
     </script>
 {% endblock %}
