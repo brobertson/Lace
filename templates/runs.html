@@ -7,17 +7,20 @@
       google.setOnLoadCallback(drawTable);
       function drawTable() {
         var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Date');
+	data.addColumn('string', 'Date');
+        data.addColumn('string', '');
         data.addColumn('number', 'B-score');
         data.addColumn('string', 'Classifier');
 	data.addColumn('string', 'Available Output');
         data.addRows([
 {% for run in text_info.ocrruns %}
-['<a href="{{ url_for('render_page',hocrtype_id=run.prefered_hocrtype().id)}}">{{ run.date }}</a>', {{ run.total_b_score() }}, '{{ run.classifier }}', '{% for hocrtype in run.hocrtypes %}<a href="{{ url_for('render_page',hocrtype_id=hocrtype.id)}}">{{hocrtype.hocr_type_string()}}</a><br/>{% endfor %}'],
+['{{ run.date}}','<a href="{{ url_for('render_page',hocrtype_id=run.prefered_hocrtype().id)}}">View</a>', {{ run.total_b_score() }}, '{{ run.classifier }}', '{% for hocrtype in run.hocrtypes %}<a href="{{ url_for('render_page',hocrtype_id=hocrtype.id)}}">{{hocrtype.hocr_type_string()}}</a><br/>{% endfor %}'],
 {% endfor %}
         ]);
 
         var table = new google.visualization.Table(document.getElementById('table_div'));
+	var formatter = new google.visualization.DateFormat({pattern: "yyyy-MM-dd-HH-mm"});
+	formatter.format(data, 0); // Apply formatter to second column
 	table.draw(data, {sortColumn: 0, sortAscending: false, allowHtml: true,'width': 900,cssClassNames:  {headerRow: 'headerRow', tableRow: 'tableRow'}});
       }
     </script>
