@@ -22,13 +22,22 @@ for file_in in sys.argv[1:]:
     values = file_name.split('_')
     identifier = values[2]
     print "identifier", identifier
+    id_directory = os.path.join(textpath,identifier)
+    if not os.path.exists(id_directory):
+        os.makedirs(id_directory)
+    tar.extractall(path=id_directory)
     try:
-        info = collect_archive_text_info('http://www.archive.org/download/' + identifier+ '/' + identifier + '_meta.xml')
+        info =  collect_archive_text_info( id_directory + '/' + identifier + '_meta.xml')
         print info
     except Exception as e:
         print e
-        print('ERROR archive identifier %s is not addressable' % identifier)
-        continue
+        try:
+            info = collect_archive_text_info('http://www.archive.org/download/' + identifier+ '/' + identifier + '_meta.xml')
+            print info
+        except Exception as e:
+            print e
+            print('ERROR archive identifier %s is not addressable' % identifier)
+            continue
     t = db.session.query(Archivetext).filter_by(archive_number=info['identifier']).first()
     if not t:
         t = Archivetext(title = info['title'], creator = info['creator'], publisher = info['publisher'],
@@ -43,10 +52,6 @@ for file_in in sys.argv[1:]:
         print "There is already a record for", info['identifier'], ". Therefore not loading this..."
     date = values[1]
     print "date", date
-    id_directory = os.path.join(textpath,identifier)
-    if not os.path.exists(id_directory):
-        os.makedirs(id_directory)
-    tar.extractall(path=id_directory)
     try:
         (run_dir_base,runs) = get_runs(info['identifier'])
         if DEBUG:
@@ -58,7 +63,7 @@ for file_in in sys.argv[1:]:
         runs = None#raise
     this_date_runs = [run for run in runs if run['date'] == date]
     if len(this_date_runs) < 1:
-        print 'There are no runs for date', run['date'], 'corresponding to archive file', file_name, '... skipping'
+        print 'There are no runs for date', date, 'corresponding to archive file', file_name, '... skipping'
         continue
     for run in runs:
         page_scores = get_page_scores(run_dir_base,run)
