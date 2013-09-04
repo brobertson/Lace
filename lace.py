@@ -59,6 +59,7 @@ class Hocrtype(db.Model):
             total = 0.0
         return total
 
+
 def int_for_hocr_type_string(hocr_type):
     return POSSIBLE_HOCR_VIEWS.index(hocr_type)
 
@@ -112,10 +113,13 @@ def search():
     from flask import render_template
     return render_template('search.html')
 
+
 @app.route('/requests')
 def requests():
     from flask import render_template
     return render_template('requests.html')
+
+
 
 def pad_page_num_for_archive(num):
     return num.zfill(4)
@@ -299,6 +303,7 @@ def runs(text_id):
 def hello_world(textpath):
     from local_settings import textpath_root
     from lxml import etree
+    import unicodedata
     a =  open(textpath_root+textpath)
     print "app root: ", APP_ROOT
     try:
@@ -311,7 +316,8 @@ def hello_world(textpath):
         style = etree.SubElement(
             head_element, "link", rel="stylesheet", type="text/css",
             href=css_file)
-        return etree.tostring(root, pretty_print=True)
+        output =  etree.tostring(root, pretty_print=True,encoding=unicode)
+        return unicodedata.normalize("NFC",output)
     except Exception as e:
         print "We're upset about:", e
         pass
