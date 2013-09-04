@@ -1,14 +1,32 @@
 {% extends "layout.html" %}
-{% block title %}Index{% endblock %}
-{% block head %}
-  {{ super() }}
-  <style type="text/css">
-    .important { color: #336699; }
-  </style>
+{% block scripts %}
+<!-- I plan to put scripts here -->
+<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <script type='text/javascript'>
+      google.load('visualization', '1', {packages:['table']});
+      google.setOnLoadCallback(drawTable);
+      function drawTable() {
+        var data = new google.visualization.DataTable();
+	data.addColumn('string', 'Date');
+	data.addColumn('string', 'Other Output');
+        data.addRows([
+{% for run in runs %}
+['Run: {{ run.date}}<br/>Archive ID: {{ run.archivetext.archive_number}}<br/>{{ run.archivetext.creator}},<i> <a href="{{ url_for('render_page',hocrtype_id=run.prefered_hocrtype().id)}}">{{ run.archivetext.title }}</i></a>', '{% for hocrtype in run.hocrtypes %}<a href="{{ url_for('render_page',hocrtype_id=hocrtype.id)}}">{{hocrtype.hocr_type_string()}}</a><br/>{% endfor %}'],
+{% endfor %}
+        ]);
+
+        var table = new google.visualization.Table(document.getElementById('table_div'));
+	var formatter = new google.visualization.DateFormat({pattern: "yyyy-MM-dd-HH-mm"});
+	formatter.format(data, 0); // Apply formatter to second column
+	table.draw(data, {sortColumn: 0, sortAscending: false, allowHtml: true,'width': 900,cssClassNames:  {headerRow: 'headerRow', tableRow: 'tableRow'}});
+      }
+    </script>
 {% endblock %}
-{% block top %}
-{% filter markdown %}
-{% endfilter %}
+{% block title %}Classifier: {{ classifier }}{% endblock %}
+{% block image_left %}
+<h3>Runs</h3>
+<div id='table_div'></div>
 {% endblock %}
 {% block right_side %}
 {% endblock %}
+~                

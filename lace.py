@@ -108,10 +108,16 @@ def stats():
     return render_template('stats.html', text_count = text_count, page_count = page_count, run_count = run_count, unique_page_count = total)
 
 
-@app.route('/search')
+@app.route('/search', methods=['GET'])
 def search():
+    classifier = request.args.get('classifier', '')
+    print "querying classifier: ", classifier
     from flask import render_template
-    return render_template('search.html')
+    runs = Ocrrun.query.filter_by(classifier = classifier).all()
+    print runs
+    sorted_runs = sorted(runs, key=lambda run: run.date)
+    print sorted_runs
+    return render_template('search.html', runs = runs, classifier=classifier)
 
 
 @app.route('/requests')
