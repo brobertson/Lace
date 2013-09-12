@@ -111,6 +111,7 @@ def stats():
 @app.route('/search', methods=['GET'])
 def search():
     classifier = request.args.get('classifier', '')
+    archive_id = request.args.get('id','')
     print "querying classifier: ", classifier
     from flask import render_template
     runs = Ocrrun.query.filter_by(classifier = classifier).all()
@@ -125,6 +126,13 @@ def requests():
     from flask import render_template
     return render_template('requests.html')
 
+
+@app.route('/classifiers')
+def classifiers():
+    from flask import render_template
+    classifiers = db.session.query(Ocrrun.classifier).distinct()
+    print classifiers
+    return render_template('classifiers.html', classifiers = classifiers)
 
 
 def pad_page_num_for_archive(num):

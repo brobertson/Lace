@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block scripts %}
+<!-- I plan to put scripts here 
+<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <script type='text/javascript'>
+      google.load('visualization', '1', {packages:['table']});
+      google.setOnLoadCallback(drawTable);
+      function drawTable() {
+        var data = new google.visualization.DataTable();
+	data.addColumn('string', 'Date');
+        //data.addColumn('string', '');
+        data.addColumn('number', 'B-score');
+        data.addColumn('string', 'Classifier');
+	data.addColumn('string', 'Available Output');
+        data.addRows([
+        ]);
+
+        var table = new google.visualization.Table(document.getElementById('table_div'));
+	var formatter = new google.visualization.DateFormat({pattern: "yyyy-MM-dd-HH-mm"});
+	formatter.format(data, 0); // Apply formatter to second column
+	table.draw(data, {sortColumn: 0, sortAscending: false, allowHtml: true,'width': 900,cssClassNames:  {headerRow: 'headerRow', tableRow: 'tableRow'}});
+      }
+-->
+    </script>
+{% endblock %}
+{% block title %}Classifiers{% endblock %}
+{% block top %}
+{% endblock %}
+{% block image_left %}
+<h3>Classifiers</h3>
+{% for classifier in classifiers  %}
+<div><a href="{{ url_for('search', classifier=classifier[0]) }}">{{ classifier[0] }}</a></div>
+{% endfor %}
+{% endblock %}
+{% block right_side %}
+{% endblock %}
+~                
