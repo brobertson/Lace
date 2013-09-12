@@ -10,7 +10,7 @@
 <br/>
 {% filter markdown %}
 This site catalogues the results of 'Rigaudon', our 2012/13 campaign to produce high-quality 
-OCR of polytonic, or 'ancient', Greek texts in a HPC environment. It comprises {{ volume_count }} [volumes]({{url_for('catalog')}}) from archive.org. There are {{ page_count }} [pages](http://localhost:5000/render_page?hocrtype_id=1692) of OCR output in total, including experimental and rejected results.
+OCR of polytonic, or 'ancient', Greek texts in a HPC environment. It comprises close to 500 [volumes]({{url_for('catalog')}}) from archive.org and from original scans. There are nearly 6 million [pages](http://localhost:5000/render_page?hocrtype_id=1692) of OCR output in total, including experimental and rejected results.
 
 Organization
 ------------
@@ -21,6 +21,10 @@ Results are presented in a hierarchical organization, beginning with the archive
 3. `blended hocr output:` the data in (2), but replaced with the corresponding words from the `raw` output in (1), should the `selected` page not comprise a dictionary word and one of the `raw` pages comprises one. 
 4. `selected hocr output spellchecked:` the data in (3) processed through a weighted levenshtein distance spellchecking algorithm that is meant to correct simple OCR errors
 5. `combined hocr output:` where archive.org provides OCR output for Latin script (not Greek), this final step pieces together the data in (4) with archive's output, preferring archive's output where our output suggests that the data is Latin. If archive.org provides Greek output, this step is no different from (4)
+
+Presentation
+------------
+Our is July 2013 presentation at the London Digital Classicist seminar series is [available online](http://www.digitalclassicist.org/wip/wip2013-07br.mp4) from the Institue of Classical Studies.
 
 Code
 ----
