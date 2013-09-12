@@ -17,7 +17,7 @@
 {% endblock %}
 </head>
 <body>
-	<div id="banner"><span><a href="{{url_for('index')}}">Rigaudon: Polytonic Greek OCR</a></span><span class="lesser"><a href="{{url_for('latest')}}">New</a><span class="lesser"><a href="{{url_for('catalog')}}">Texts</a></span><span class="lesser"><a href="{{url_for('about')}}">About Us</a></span><span class="lesser"><a href="{{url_for('search')}}">Search</a></span><span class="lesser"><a href="{{url_for('requests')}}">Requests</a></span></div>
+	<div id="banner"><span><a href="{{url_for('index')}}">Rigaudon: Polytonic Greek OCR</a></span><span class="lesser"><a href="{{url_for('latest')}}">New</a><span class="lesser"><a href="{{url_for('catalog')}}">Texts</a></span><span class="lesser"><a href="{{url_for('classifiers')}}">Classifiers</a></span><span class="lesser"><a href="{{url_for('about')}}">About Us</a></span><span class="lesser"><a href="{{url_for('search')}}">Search</a></span><span class="lesser"><a href="{{url_for('requests')}}">Requests</a></span></div>
 {% block top %}
 {% if text_info %}
   <h1>{{ text_info['title'] }}</h1>
