@@ -6,6 +6,7 @@
 <h2>{{work_count}} Texts</h2>
 {% for work in works %}
 <h3 class="textinfo"><a href="{{ url_for('runs', text_id=work.archive_number) }}">{{ work.creator }} ({{ work.date }}). <i>{{work.title}}</i> {{work.volume}}</a></h3>
+
 {% endfor %}
 {% endblock %}
 {% block right_side %}

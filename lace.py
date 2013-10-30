@@ -84,9 +84,7 @@ class Outputpage(db.Model):
 @app.route('/')
 def index():
     from flask import render_template
-    works = Archivetext.query.all()
-    works = [work for work in works if work.ocrruns]
-    return render_template('index.html',volume_count=len(works),page_count = Outputpage.query.count())
+    return render_template('index.html')
 
 
 @app.route('/about')
@@ -125,6 +123,17 @@ def search():
 def requests():
     from flask import render_template
     return render_template('requests.html')
+
+
+@app.route('/process_image', methods=['POST'])
+def process_image():
+    import html2text
+    from lxml import html
+    this_page = Outputpage.query.filter_by(id = 8310578).first()
+    the_html = hello_world(this_page.relative_path)
+    return html2text.html2text(the_html)
+    #from flask import render_template
+    #return render_template('index.html')
 
 
 @app.route('/classifiers')
@@ -268,7 +277,7 @@ def catalog():
 @app.route('/latest')
 def latest():
     from flask import render_template
-    works = catalog_base('run_date', True, 5)
+    works = catalog_base('run_date', True, 10)
     work_count = len(works)
     dates = []
     for work in works:
@@ -330,6 +339,9 @@ def hello_world(textpath):
         style = etree.SubElement(
             head_element, "link", rel="stylesheet", type="text/css",
             href=css_file)
+        span_elements = tree.xpath("//html:span | //span", namespaces={'html': "http://www.w3.org/1999/xhtml"})
+        for span in span_elements:
+            span.tail = " "
         output =  etree.tostring(root, pretty_print=True,encoding=unicode)
         return unicodedata.normalize("NFC",output)
     except Exception as e:
