@@ -14,15 +14,23 @@ print t
 if not t:
     print "there is no archive id " + sys.argv[1] + " in lace"
 else:
-    print t
+    db.session.delete(t)
+    print "deleting",t
     runs = db.session.query(Ocrrun).filter_by(archivetext_id = t.id)
     for run in runs:
+        print "deleting", run
         print run
+        db.session.delete(run)
         hocr_types = db.session.query(Hocrtype).filter_by(ocrrun_id = run.id)
         for hocr_type in hocr_types:
-            print hocr_type
+            print "deleting",hocr_type
+            db.session.delete(hocr_type)
             pages = db.session.query(Outputpage).filter_by(hocrtype_id = hocr_type.id)
             print "and", pages.count(), "pages"
+            for page in pages:
+                print "deleting page", page
+                db.session.delete(page)
+db.session.commit()
 
 
 
