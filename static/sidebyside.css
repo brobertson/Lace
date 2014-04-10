@@ -100,6 +100,8 @@ h3.textinfo {
 	font-size: 12pt;
 	margin: 5px;
 	margin-top: 10px;
+        text-indent: -2em; 
+        margin-left: 2em;
 }
 h3.textinfo a {
 	text-decoration: none;

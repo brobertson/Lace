@@ -4,19 +4,17 @@
 */
 @font-face {
     font-family: 'GFS-Porson';
-    src: url('http://heml.mta.ca/Rigaudon/fonts/porson/gfsporsonregular.eot');
-    src: url('http://heml.mta.ca/Rigaudon/fonts/porson/gfsporsonregular.eot?#iefix') format('embedded-opentype'),
-         url('http://heml.mta.ca/Rigaudon/fonts/porson/gfsporsonregular.woff') format('woff'),
-         url('http://heml.mta.ca/Rigaudon/fonts/porson/gfsporsonregular.ttf') format('truetype');
+/*    src: url('http://heml.mta.ca/rigaudon/static/Fonts/Porson/GFSPorson.eot');
+    src: url('http://heml.mta.ca/rigaudon/static/Fonts/Porson/GFSPorson.eot?#iefix') format('embedded-opentype');
+*/ 
+   src: url('http://heml.mta.ca/rigaudon/static/Fonts/Porson/GFSPorson.woff') format('woff'),
+         url('http://heml.mta.ca/rigaudon/static/Fonts/Porson/GFSPorson.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     
     unicode-range:
-        U+0370–U+03FF,
-        U+1F00–U+1FFF;
-
+         U+590-5ff, U+300-345, U+370-3ff, U+1e00-1fff;
 }
-
 /*
 span.ocr_word {
     margin:0 0.1em;
@@ -24,9 +22,10 @@ span.ocr_word {
 }
 */
 body {
-  font-family: 'GFS-Porson', 'New Athena Unicode', 'GFS Philostratos', 'GFS Porson', 'Cardo', serif;
+  font-family: 'GFS-Porson', 'New Athena Unicode', 'GFS Philostratos',  'Cardo', 'GFS-Porson', serif;
   font-size: 16px;
   background: #eec;
+  line-height: 130%;
 }
 
 span.ocr_word:first-of-type {
@@ -37,11 +36,13 @@ span.ocr_word:last-of-type {
     margin-right:0;
 }
 
-/*
 span.ocr_line {
     display: block;
 }
-*/
+
+span.ocr_line + br {
+    display: none;
+}
 p{
     margin: 0;
     padding: 0;

@@ -1,0 +1,5 @@
+sudo apt-get install libmysqlclient-dev python-pip python-dev
+sudo pip install Flask
+sudo pip install Flask-SQLAlchemy
+sudo pip install Flask-Markdown
+sudo pip install MySQL-python

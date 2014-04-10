@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    .important { color: #336699; }
+  </style>
+{% endblock %}
+{% block top %}
+<br/>
+{% filter markdown %}
+Gallery
+-------
+We are making strides in OCRing Migne's _Patrologia Graeca_: Here is [a text](http://heml.mta.ca/rigaudon/runs/pt3patrologiaecur16mign) processed last year; here is [a similar one](http://heml.mta.ca/rigaudon/runs/patrologiaecursu45mignuoft) processed in 2014.
+
+We have many collections of fragments, papyri, etc, such as
+[Kock, T. _Comicorum Atticorum Fragmenta 3_](http://heml.mta.ca/lace/render_page?hocrtype_id=4804) and Koerte's fragments of [Metrodorus of Lampsacus](http://heml.mta.ca/lace/render_page?hocrtype_id=4754).
+
+Complete or near-complete series include the volumes in [Commentaria in Aristotelem Graeca](http://heml.mta.ca/lace/render_page?hocrtype_id=1964), Cramer's [Catena Graecorum Patrum](http://heml.mta.ca/lace/render_page?hocrtype_id=4894), and Meyer's [Critical and Exegetical Handbook](http://heml.mta.ca/lace/sidebysideview2/9426275) series of biblical commentaries.
+
+Teachers of ancient Greek might be interested in [Rouse, W. H. D. _A Greek Boy at Home, A Story Written in Greek._](http://heml.mta.ca/lace/render_page?hocrtype_id=5449) or these [Greek](http://heml.mta.ca/lace/render_page?hocrtype_id=3064) [grammars](http://heml.mta.ca/lace/sidebysideview2/7394823).
+
+[Lexica](http://heml.mta.ca/lace/render_page?hocrtype_id=6104) and [glossaries](http://heml.mta.ca/lace/render_page?hocrtype_id=5718) have great potential for data-mining.
+
+Unusal fonts processed include this [Bekker edition of Aristotle](http://heml.mta.ca/lace/render_page?hocrtype_id=2168), published by Reimer.
+
+The **Loeb** editions provide facing translations, useful for natural language processing. OCR provides access to volumes from this series that have not yet been digitized, such as Cary's [*Roman Antiquities* of Dionysius of Halicarnassus](http://heml.mta.ca/lace/sidebysideview2/7008531), [Eusebius](http://heml.mta.ca/lace/sidebysideview2/6234624), [Galen, *On the Natural Faculties*](http://heml.mta.ca/lace/render_page?hocrtype_id=3719) and [Julian](http://heml.mta.ca/lace/sidebysideview2/8205865).
+{% endfilter %}
+{% endblock %}
+{% block right_side %}
+{% endblock %}

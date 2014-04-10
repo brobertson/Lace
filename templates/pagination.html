@@ -1,4 +1,16 @@
 <div id="centeredmenu">
+<script language="javascript" type="text/javascript">
+
+function page_back() 
+{
+    window.location.href = "{{ page_before }}";
+}
+
+function page_forward()
+{
+    window.location.href = "{{ page_after }}";
+}
+</script>
 <ul>
 	<li class="previous{% if (not page_before_exists) %}-off{% endif %}">
 	{% if page_before_exists %}

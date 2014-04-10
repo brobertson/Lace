@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+{% block title %}Frequently Asked Questions{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    .important { color: #336699; }
+  </style>
+{% endblock %}
+{% block top %}
+<br/>
+{% filter markdown %}
+FAQ
+---
+__1. How do I download an archive of a particular OCR run?__
+
+Click on the '.tar.gz' link under the 'Download Archive' column of the Runs view for the volume. This is a so-called 'tar' archive; you will need an application to decompress it. Inside will be a series of directories corresponding to the levels of output listed on the homepage.  The results are in UTF-8 encoded html. 
+
+__2. What Am I Allowed To Do With The OCR Output?__
+
+Anything you wish. These data have the same property rights as their source images at archive.org. Archive notes that the originating volumes are in public domain. 
+
+__3. How Can These Results Be Edited?__
+
+We have also developed an editing enviroment to ease the process of hand-correcting these results. If you have a team of students or researchers who would like to edit one or more of the texts in this collection, please contact us.
+
+__4. Can You Also OCR My Favorite Volume?__
+
+We are happy to try to process jobs of interest to other scholars. At present, our workflow is centred around the materials provided by archive.org, so please append the archive.org text identifier to our public [request spreadsheet](https://docs.google.com/spreadsheet/ccc?key=0ArJt01185Q8mdERsS2VRMngtTWRNUDAtNGFxZXhFQVE#gid=0).
+
+__5. You Should OCR All Of Migne's _Patrologia Graeca_ __
+
+We have OCR'd [one volume](http://heml.mta.ca/lace/sidebysideview2/8807815) of Migne. Stay tuned for more.
+
+__6. Can I Do OCR On My Own Images?__
+
+The software used here is not ideally suited for a desktop environment. We strongly recommend the tesseract OCR Engine and Nick White's polytonic Greek [classifiers](http://www.eutypon.gr/eutypon/pdf/e2012-29/e29-a01.pdf).  
+
+__7. Is It Really Necessary To Do This? We Have Had the Perseus Digital Library and The TLG For Decades.__
+
+The TLG does not allow us to use the data however we see fit, a Big Problem in an age of Big Data (thanks, Callimachus). Perseus' licence is unrestricted, but not all Greek authors are available in that library, and OCR is one way to complete its collection. Moreover, OCR offers much more than ancient authors' texts. Works that are 'about' ancient Greek, like lexica, grammars, monographs and articles will all be more useful when searchable.
+
+__8. Can A Search Function Be Added To This Site?__
+
+Using a smaller dataset, Robertson made an experimental [image-fronted Greek OCR search app](https://www.youtube.com/watch?v=MZBZ1IOtFYs). We plan to port this approach to the current site, or to assist others in doing something similar.
+
+__9. Where Can I Learn More About The Operation Of The OCR Software?__
+
+Our July 2013 presentation at the London Digital Classicist seminar series is [available online](http://www.digitalclassicist.org/wip/wip2013-07br.mp4) from the Institue of Classical Studies. Details of its operation are outlined in a [white paper](https://docs.google.com/document/d/1iYfqflLybd3f9bBfTBk8aY_FTq05kCnq4tiKwYpqtrM/edit?usp=sharing).
+
+__10. How Does This Site Work? Can I Use The Web Software That Presents The OCR Output?__
+
+The codebase for this site is called, Lace, and is available under a GNU license at [github](https://github.com/brobertson/Lace). Lace uses the very flexible [Flask](http://flask.pocoo.org/) Python microframework.
+
+__11. The Results From My Favorite Volume Are Much Worse Than The Rest. Can You Fix That?__
+
+Possibly. Sometimes we assign the wrong classifier for a volume, or a volume hasn't been re-processed in a long while. Send a link to a page with a description of the problems you notice to [Bruce](mailto:brobertson@mta.ca).
+
+__12. Latin Script Text Is Getting Misidentified As Greek. Shouldn't You Re-process The OCR?__
+
+Not necessarily. Using your browsers 'inspect element' function on the word in question, you'll see that the Latin version of the word is 'stored' in the html output. So for many of these kinds of errors, we just need to perform a last step of post-processing where we check these against a Latin, English, German, etc. dictionary. Right now, while we have access to the HPC environment, we're OCRing as many texts as we can; we'll get back to this fix later. 
+ 
+__13. What's Next in Greek OCR?__
+
+The results from our first 600 volumes can be used to train further OCR engines, comparing their results to improve accuracy. We also need to make it easier for people to take and process their own images.
+
+{% endfilter %}
+{% endblock %}
+{% block right_side %}
+{% endblock %}

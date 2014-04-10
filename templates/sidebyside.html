@@ -5,12 +5,12 @@
 {% include "pagination.html" %}
 {% endblock %}
 {% block image_left %}
-<img id="page_image" src='{{ image_path }}' alt="photo"/>
+<img onclick="return page_back()" id="page_image" src='{{ image_path }}' alt="photo"/>
 {% endblock %}
 {% block right_side %}
-<p class="data"><b>Run date: </b>{{ this_page.hocrtype.ocrrun.date }}</p>
+<p class="data"><b>Run date: </b>{{ this_page.hocrtype.ocrrun.date }} <a href="{{ this_page.hocrtype.ocrrun.link_to_tar_file()}}">tar.gz</a> <a href="{{ this_page.hocrtype.ocrrun.link_to_zip_file()}}">.zip</a></p>
 <p class="data"><b>View: </b>{{ this_page.hocrtype.hocr_type_string() }}</p>
 <p class="data"><b>Classifier: </b>{{ this_page.hocrtype.ocrrun.classifier }}</p>
-<iframe  frameBorder="0" width="850px" height="1100px"
+<iframe frameBorder="0" width="850px" height="1100px"
 src='{{ html_url }}'></iframe>
 {% endblock %}

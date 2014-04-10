@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    .important { color: #336699; }
+  </style>
+{% endblock %}
+{% block top %}
+{% filter markdown %}
+Editing
+-------
+We have also developed an editing enviroment to ease the process of hand-correcting these results. If you have a team of students or researchers who would like to edit one or more of the texts in this collection, please contact us.
+  
+Requests
+--------
+We are happy to try to process jobs of interest to other scholars. Please append the archive.org text identifier to our public [request spreadsheet](https://docs.google.com/spreadsheet/ccc?key=0ArJt01185Q8mdERsS2VRMngtTWRNUDAtNGFxZXhFQVE#gid=0). 
+
+Search
+------
+Using a smaller dataset, Robertson made an experimental [image-fronted Greek OCR search app](https://www.youtube.com/watch?v=MZBZ1IOtFYs). We plan to port this approach to the current site, or assist others in doing something similar.
+{% endfilter %}
+{% endblock %}
+{% block right_side %}
+{% endblock %}

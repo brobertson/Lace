@@ -4,6 +4,7 @@
 {% endblock %}
 {% block image_left %}
 <h2>Most Recently Processed Texts</h2>
+<p>These recent runs might not be pretty, but they show you what we're up to today.</p>
 {% for work in works %}
 <h3 class="textinfo">{{ work.run_date }} <a href="{{ url_for('runs', text_id=work.archive_number) }}">{{ work.creator }} ({{ work.date }}). <i>{{work.title}}</i> {{work.volume}}</a></h3>
 {% endfor %}

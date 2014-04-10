@@ -66,7 +66,10 @@ for file_in in sys.argv[1:]:
         print 'There are no runs for date', date, 'corresponding to archive file', file_name, '... skipping'
         continue
     for run in runs:
-        page_scores = get_page_scores(run_dir_base,run)
+        try:
+		page_scores = get_page_scores(run_dir_base,run)
+	except:
+		page_scores = {} 
         r = db.session.query(Ocrrun).filter_by(archivetext_id = t.id).filter_by(date=run['date']).first()
         if not r:
             r = Ocrrun(archivetext_id = t.id, classifier = run['classifier'], date = run['date'])
@@ -135,7 +138,14 @@ for file_in in sys.argv[1:]:
                             except:
                                 raise
         db.session.commit()
-    os.rename(file_in, file_in + '-processed')
+    out_dir = os.path.abspath(os.path.join(os.path.dirname(file_in), '..', 'Outbox'))
+    print "out dir is:", out_dir
+    if os.path.exists(out_dir):
+        print "it exists, so we are moving", file_in, "to it"
+        file_out = os.path.join(out_dir,os.path.basename(file_in))
+        os.rename(file_in, file_out)
+    else:
+        os.rename(file_in, file_in + '-processed')
 
 
 

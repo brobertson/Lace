@@ -1,4 +1,4 @@
-from flask import Flask, url_for, request
+from flask import Flask, url_for, request, abort
 from flask.ext.sqlalchemy import SQLAlchemy
 from settings import APP_ROOT, POSSIBLE_HOCR_VIEWS,PREFERENCE_OF_HOCR_VIEWS
 from local_settings import database_uri
@@ -7,6 +7,14 @@ app = Flask(__name__)
 Markdown(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 db = SQLAlchemy(app)
+
+#rank the hocr views
+hocr_view_score = dict()
+for index, item in enumerate(POSSIBLE_HOCR_VIEWS):
+    for index2, item2 in enumerate(PREFERENCE_OF_HOCR_VIEWS):
+        if item2 == item:
+            hocr_view_score[index] = index2
+
 
 class Archivetext(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -22,6 +30,11 @@ class Archivetext(db.Model):
     #ocrruns = db.relationship('Ocrrun', backref=db.backref('archivetext', lazy='dynamic'))
     def __repr__(self):
         return '<Archive_id %r>' % (self.archive_number)
+    def date_sorted_runs(self):
+        out = sorted(self.ocrruns, key=lambda x: x.date, reverse=True)
+        for run in out:
+            print run, run.date
+        return out
 
 class Ocrrun(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -41,6 +54,12 @@ class Ocrrun(db.Model):
                 if hocrtype.hocr_type == current_type:
                     return hocrtype
         raise ValueError
+    def sorted_hocrtypes(self):
+        return sorted(self.hocrtypes)
+    def link_to_tar_file(self):
+        return url_for('static', filename='Tars/robertson_' + self.date + '_' + self.archivetext.archive_number + '_jp2_' + self.classifier + '_full.tar.gz')
+    def link_to_zip_file(self):
+        return url_for('static', filename='Zips/robertson_' + self.date + '_' + self.archivetext.archive_number + '_jp2_' + self.classifier + '_full.zip')
     def __repr__(self):
          return '<Ocrrun %r>' % (str(self.archivetext_id) + ' ' + self.date)
 
@@ -58,7 +77,10 @@ class Hocrtype(db.Model):
         if total < 0:
             total = 0.0
         return total
-
+    def __gt__(self, other):
+        return hocr_view_score[self.hocr_type] > hocr_view_score[other.hocr_type]
+    def __lt__(self, other):
+        return not hocr_view_score[self.hocr_type] > hocr_view_score[other.hocr_type]
 
 def int_for_hocr_type_string(hocr_type):
     return POSSIBLE_HOCR_VIEWS.index(hocr_type)
@@ -92,7 +114,6 @@ def about():
     from flask import render_template
     return render_template('about.html')
 
-
 @app.route('/stats')
 def stats():
     from flask import render_template
@@ -119,18 +140,27 @@ def search():
     return render_template('search.html', runs = runs, classifier=classifier)
 
 
-@app.route('/requests')
-def requests():
+@app.route('/nextsteps')
+def nextsteps():
     from flask import render_template
-    return render_template('requests.html')
+    return render_template('nextsteps.html')
 
+@app.route('/faq')
+def faq():
+    from flask import render_template
+    return render_template('faq.html')
+
+@app.route('/gallery')
+def gallery():
+    from flask import render_template
+    return render_template('gallery.html')
 
 @app.route('/process_image', methods=['POST'])
 def process_image():
     import html2text
     from lxml import html
     this_page = Outputpage.query.filter_by(id = 8310578).first()
-    the_html = hello_world(this_page.relative_path)
+    the_html = view_html(this_page.relative_path)
     return html2text.html2text(the_html)
     #from flask import render_template
     #return render_template('index.html')
@@ -187,7 +217,7 @@ def make_pagination_array(sister_outputpages, this_page, steps):
             current_index = stepsize * i
             is_current = False
         pagination_array.append([(current_index + 1), url_for('side_by_side_view2',outputpage_id = str(sister_outputpages[current_index].id)), is_current])
-    print pagination_array
+    #print pagination_array
     return pagination_array
 
 
@@ -277,7 +307,12 @@ def catalog():
 @app.route('/latest')
 def latest():
     from flask import render_template
-    works = catalog_base('run_date', True, 10)
+    if request.args.get('count'):
+        count = int(request.args.get('count'))
+    else:
+        count = 10
+
+    works = catalog_base('run_date', True, count)
     work_count = len(works)
     dates = []
     for work in works:
@@ -323,11 +358,17 @@ def runs(text_id):
 
 
 @app.route('/text/<path:textpath>')
-def hello_world(textpath):
+
+
+def view_html(textpath):
     from local_settings import textpath_root
     from lxml import etree
     import unicodedata
-    a =  open(textpath_root+textpath)
+    try:
+        a =  open(textpath_root+textpath)
+    except Exception as e:
+        from flask import render_template
+        return render_template('nohtmlfile.html')
     print "app root: ", APP_ROOT
     try:
         tree = etree.parse(a)
@@ -340,13 +381,31 @@ def hello_world(textpath):
             head_element, "link", rel="stylesheet", type="text/css",
             href=css_file)
         span_elements = tree.xpath("//html:span | //span", namespaces={'html': "http://www.w3.org/1999/xhtml"})
+        #Add onclick element so that clicking on the iframe's html will send the entire framing document
+        #forward to the next page
+        body = tree.xpath("//html:body | //body", namespaces={'html': "http://www.w3.org/1999/xhtml"})
+        body[0].set('onclick','return parent.page_forward()')
         for span in span_elements:
             span.tail = " "
         output =  etree.tostring(root, pretty_print=True,encoding=unicode)
         return unicodedata.normalize("NFC",output)
     except Exception as e:
-        print "We're upset about:", e
-        pass
+        from flask import render_template
+        return render_template('nohtmlfile.html')
+	#print "We're upset about:", e
+        #flask.abort() 
+
+def html_body_elements(textpath):
+    from lxml import etree
+    html = view_html(textpath)
+    tree = etree.parse(html)
+    root = tree.getroot()
+    #body_element = tree.xpath("/html:html/html:body | /html/body", namespaces={'html': "http://www.w3.org/1999/xhtml"})
+    body_string = etree.tostring(root, pretty_print=True, encoding=unicode)
+    #print body_string
+    return unicodedata.normalize("NFC",body_string)
+
+
 
 @app.route('/sidebysideview2/<outputpage_id>')
 def side_by_side_view2(outputpage_id):
@@ -375,7 +434,8 @@ def side_by_side_view2(outputpage_id):
     try:
         return render_template('sidebyside.html',
                                this_page = this_page,
-                               html_url = url_for('hello_world',textpath = this_page.relative_path),
+                               html_url = url_for('view_html',textpath = this_page.relative_path),
+                               #html_content = html_body_elements(this_page.relative_path),
                                text_id=text_id,
                                text_info=this_page.hocrtype.ocrrun.archivetext,
                                image_path=
@@ -387,7 +447,7 @@ def side_by_side_view2(outputpage_id):
                                page_after=page_after,
                                pagination_array=pagination_array)
     except IOError:
-        return render_template('no_such_text_id.html', textid=text_id), 404
+        pass#return render_template('no_such_text_id.html', textid=text_id), 404
 
 
 if __name__ == '__main__':

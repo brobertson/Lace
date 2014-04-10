@@ -7,14 +7,15 @@
       google.setOnLoadCallback(drawTable);
       function drawTable() {
         var data = new google.visualization.DataTable();
-	data.addColumn('string', 'Date');
+	data.addColumn('string', 'Date (click to view)');
         //data.addColumn('string', '');
         data.addColumn('number', 'B-score');
         data.addColumn('string', 'Classifier');
-	data.addColumn('string', 'Available Output');
+	data.addColumn('string', 'Raw Output From OCR Stages');
+        data.addColumn('string', 'Download Archive');
         data.addRows([
-{% for run in text_info.ocrruns %}
-['{{ run.date}} <a href="{{ url_for('render_page',hocrtype_id=run.prefered_hocrtype().id)}}">View</a>', {{ run.total_b_score() }}, '{{ run.classifier }}', '{% for hocrtype in run.hocrtypes %}<a href="{{ url_for('render_page',hocrtype_id=hocrtype.id)}}">{{hocrtype.hocr_type_string()}}</a><br/>{% endfor %}'],
+{% for run in text_info.date_sorted_runs() %}
+['{{ run.date}} <a href="{{ url_for('render_page',hocrtype_id=run.prefered_hocrtype().id)}}">View</a>', {{ run.total_b_score() }}, '{{ run.classifier }}', '{% for hocrtype in run.sorted_hocrtypes() %}<a href="{{ url_for('render_page',hocrtype_id=hocrtype.id)}}">{{hocrtype.hocr_type_string()}}</a><br/>{% endfor %}', '<a href="{{ run.link_to_tar_file() }}">tar.gz</a> <a href="{{ run.link_to_zip_file() }}">.zip</a>']{% if not loop.last %},{% endif %}
 {% endfor %}
         ]);
 
@@ -25,13 +26,16 @@
       }
     </script>
 {% endblock %}
-{% block title %}Runs{% endblock %}
+{% block title %}OCR Runs for {{ text_info.archive_number }} {% endblock %}
 {% block top %}
 {% include "textinfo.html" %}
 {% endblock %}
 {% block image_left %}
 <h3>Runs</h3>
  <div id='table_div'></div>
+<!--
+<i>If there is no table above, you may be encountering an incompatibility with Internet Explorer. We will try to fix this in the coming days. In the meantime, please try this same page with <a href="http://www.getfirefox.com">Firefox</a> or Google <a href="ttps://www.google.com/intl/en/chrome/browser/">Chrome.</a></i>
+-->
 {% endblock %}
 {% block right_side %}
 {% endblock %}
