@@ -117,6 +117,7 @@ for file_in in sys.argv[1:]:
                     except ValueError:
                         try:
                             (name, page_number) = os.path.basename(hocr_file)[:-5].split('_')
+                            thresh_value= 0
                             if DEBUG:
                                 print 'page', page_number
                                 print 'output type', output_type

@@ -15,7 +15,7 @@
         data.addColumn('string', 'Download Archive');
         data.addRows([
 {% for run in text_info.date_sorted_runs() %}
-['{{ run.date}} <a href="{{ url_for('render_page',hocrtype_id=run.prefered_hocrtype().id)}}">View</a>', {{ run.total_b_score() }}, '{{ run.classifier }}', '{% for hocrtype in run.sorted_hocrtypes() %}<a href="{{ url_for('render_page',hocrtype_id=hocrtype.id)}}">{{hocrtype.hocr_type_string()}}</a><br/>{% endfor %}', '<a href="{{ run.link_to_tar_file() }}">tar.gz</a> <a href="{{ run.link_to_zip_file() }}">.zip</a>']{% if not loop.last %},{% endif %}
+['{{ run.date}} <a href="{{ url_for('render_page',hocrtype_id=run.prefered_hocrtype().id)}}">View</a>', {{ run.total_b_score() }}, '{{ run.classifier }}', '{% for hocrtype in run.sorted_hocrtypes() %}<a href="{{ url_for('render_page',hocrtype_id=hocrtype.id)}}">{{hocrtype.hocr_type_string()}}</a><br/>{% endfor %}','{% if run.link_to_tar_file() %} <a href="{{run.link_to_tar_file()}}">.tar.gz</a> {% endif %} {% if run.link_to_zip_file() %} &nbsp;<a href="{{run.link_to_zip_file()}}">.zip</a> {% endif %}']{% if not loop.last %},{% endif %}
 {% endfor %}
         ]);
 

@@ -77,7 +77,7 @@ def get_runs(text_id):
     run_dirs = os.listdir(path_to_runs)
     run_dirs = [elem for elem in run_dirs if 'output' in elem ]
     run_dates = sorted(set([elem[0:16] for elem in run_dirs]))# gets uniq dates
-    #print run_dates
+    print "rundates", run_dates
     run_info = []
     for run_date in run_dates:
         run = {}
@@ -85,6 +85,7 @@ def get_runs(text_id):
         run['date'] = run_date
         dir_for_glob =  path_to_runs + '/' + run_date
         sel_hocr_dir_glob = dir_for_glob + '*selected_hocr_output'
+	print "sel dir", sel_hocr_dir_glob
         sel_hocr_dir = glob.glob(sel_hocr_dir_glob)[0]
         try:
             score_file = open(sel_hocr_dir + '/best_scores_sum.txt')

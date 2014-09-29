@@ -68,7 +68,7 @@ class Ocrrun(db.Model):
                 	#print "yep, ", filename, "is a file"
                 	return url_for('static', filename=filename)
 		else:
-			return None
+			return None 
     def link_to_zip_file(self):
 	import os.path
         filename='Zips/robertson_' + self.date + '_' + self.archivetext.archive_number + '_jp2_' + self.classifier + '_full.zip'
@@ -81,17 +81,18 @@ class Ocrrun(db.Model):
                         #print "yep, ", filename, "is a file"
                         return url_for('static', filename=filename)
                 else:
-                        return None
+                        return False
     def archive_anchors(self):
 	zip_anchor = ""
 	tar_anchor = ""
 	zip_link = self.link_to_zip_file()
+	print "zip_link:", zip_link
 	if zip_link:
 		zip_anchor = '<a href="' + zip_link + '">.zip</a>'
 	tar_link = self.link_to_tar_file()
 	if tar_link:
 		tar_anchor = '<a href="' + tar_link + '">.tar.gz</a>'
-	return tar_anchor + '&nbsp;' + zip_anchor
+	return tar_anchor #+ '&nbsp;' + zip_anchor
 
     def __repr__(self):
          return '<Ocrrun %r>' % (str(self.archivetext_id) + ' ' + self.date)
