@@ -57,9 +57,42 @@ class Ocrrun(db.Model):
     def sorted_hocrtypes(self):
         return sorted(self.hocrtypes)
     def link_to_tar_file(self):
-        return url_for('static', filename='Tars/robertson_' + self.date + '_' + self.archivetext.archive_number + '_jp2_' + self.classifier + '_full.tar.gz')
+	import os.path
+	filename='Tars/robertson_' + self.date + '_' + self.archivetext.archive_number + '_jp2_' + self.classifier + '_full.tar.gz'
+	if os.path.isfile(APP_ROOT + '/static/' + filename):
+		#print "yep, ", filename, "is a file"
+        	return url_for('static', filename=filename)
+	else:
+		filename = 'Tars/robertson_' + self.date + '_' + self.archivetext.archive_number + '_' + self.classifier + '_full.tar.gz'
+		if os.path.isfile(APP_ROOT + '/static/' + filename):
+                	#print "yep, ", filename, "is a file"
+                	return url_for('static', filename=filename)
+		else:
+			return None
     def link_to_zip_file(self):
-        return url_for('static', filename='Zips/robertson_' + self.date + '_' + self.archivetext.archive_number + '_jp2_' + self.classifier + '_full.zip')
+	import os.path
+        filename='Zips/robertson_' + self.date + '_' + self.archivetext.archive_number + '_jp2_' + self.classifier + '_full.zip'
+        if os.path.isfile(APP_ROOT + '/static/' + filename):
+                #print "yep, ", filename, "is a file"
+                return url_for('static', filename=filename)
+        else:
+                filename = 'Zips/robertson_' + self.date + '_' + self.archivetext.archive_number + '_' + self.classifier + '_full.zip'
+                if os.path.isfile(APP_ROOT + '/static/' + filename):
+                        #print "yep, ", filename, "is a file"
+                        return url_for('static', filename=filename)
+                else:
+                        return None
+    def archive_anchors(self):
+	zip_anchor = ""
+	tar_anchor = ""
+	zip_link = self.link_to_zip_file()
+	if zip_link:
+		zip_anchor = '<a href="' + zip_link + '">.zip</a>'
+	tar_link = self.link_to_tar_file()
+	if tar_link:
+		tar_anchor = '<a href="' + tar_link + '">.tar.gz</a>'
+	return tar_anchor + '&nbsp;' + zip_anchor
+
     def __repr__(self):
          return '<Ocrrun %r>' % (str(self.archivetext_id) + ' ' + self.date)
 
@@ -149,6 +182,11 @@ def nextsteps():
 def faq():
     from flask import render_template
     return render_template('faq.html')
+
+@app.route('/datech14')
+def datech():
+    from flask import render_template
+    return render_template('datech2014.html')
 
 @app.route('/gallery')
 def gallery():
@@ -369,7 +407,7 @@ def view_html(textpath):
     except Exception as e:
         from flask import render_template
         return render_template('nohtmlfile.html')
-    print "app root: ", APP_ROOT
+    #print "app root: ", APP_ROOT
     try:
         tree = etree.parse(a)
         root = tree.getroot()
@@ -384,7 +422,7 @@ def view_html(textpath):
         #Add onclick element so that clicking on the iframe's html will send the entire framing document
         #forward to the next page
         body = tree.xpath("//html:body | //body", namespaces={'html': "http://www.w3.org/1999/xhtml"})
-        body[0].set('onclick','return parent.page_forward()')
+        #body[0].set('onclick','return parent.page_forward()')
         for span in span_elements:
             span.tail = " "
         output =  etree.tostring(root, pretty_print=True,encoding=unicode)
