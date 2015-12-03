@@ -74,10 +74,12 @@ def get_runs(text_id):
     import os
     import glob
     path_to_runs = get_absolute_textpath(text_id)
+    print "path to runs", path_to_runs
     run_dirs = os.listdir(path_to_runs)
+    print "run dirs", run_dirs
     run_dirs = [elem for elem in run_dirs if 'output' in elem ]
     run_dates = sorted(set([elem[0:16] for elem in run_dirs]))# gets uniq dates
-    #print run_dates
+    print run_dates
     run_info = []
     for run_date in run_dates:
         run = {}
@@ -85,7 +87,9 @@ def get_runs(text_id):
         run['date'] = run_date
         dir_for_glob =  path_to_runs + '/' + run_date
         sel_hocr_dir_glob = dir_for_glob + '*selected_hocr_output'
+        print sel_hocr_dir_glob
         sel_hocr_dir = glob.glob(sel_hocr_dir_glob)[0]
+        print "sel_hocr_dir", sel_hocr_dir
         try:
             score_file = open(sel_hocr_dir + '/best_scores_sum.txt')
             run['score'] = score_file.read()

@@ -3,14 +3,14 @@
 {% block top %}
 {% include "textinfo.html" %}
 {% include "pagination.html" %}
+<div>
+<p class="data"> Date: {{ this_page.hocrtype.ocrrun.date }} // Output type: {{ this_page.hocrtype.hocr_type_string() }} // Classifier: {{ this_page.hocrtype.ocrrun.classifier }} {% if this_page.hocrtype.ocrrun.link_to_tar_file() %} //<a href="{{this_page.hocrtype.ocrrun.link_to_tar_file()}}">.tar.gz</a> {% endif %} {% if this_page.hocrtype.ocrrun.link_to_zip_file() %} //&nbsp;<a href="{{this_page.hocrtype.ocrrun.link_to_zip_file()}}">.zip</a> {% endif %}</p>
+</div>
 {% endblock %}
 {% block image_left %}
 <img onclick="return page_back()" id="page_image" src='{{ image_path }}' alt="photo"/>
 {% endblock %}
 {% block right_side %}
-<p class="data"><b>Run date: </b>{{ this_page.hocrtype.ocrrun.date }} <a href="{{ this_page.hocrtype.ocrrun.link_to_tar_file()}}">tar.gz</a> <a href="{{ this_page.hocrtype.ocrrun.link_to_zip_file()}}">.zip</a></p>
-<p class="data"><b>View: </b>{{ this_page.hocrtype.hocr_type_string() }}</p>
-<p class="data"><b>Classifier: </b>{{ this_page.hocrtype.ocrrun.classifier }}</p>
 <iframe frameBorder="0" width="850px" height="1100px"
 src='{{ html_url }}'></iframe>
 {% endblock %}

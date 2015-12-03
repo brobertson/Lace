@@ -1,8 +1,10 @@
+# -*- coding: UTF-8 -*-
 from flask import Flask, url_for, request, abort
 from flask.ext.sqlalchemy import SQLAlchemy
 from settings import APP_ROOT, POSSIBLE_HOCR_VIEWS,PREFERENCE_OF_HOCR_VIEWS
 from local_settings import database_uri
 from flaskext.markdown import Markdown
+from authentication import requires_auth
 app = Flask(__name__)
 Markdown(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
@@ -60,12 +62,12 @@ class Ocrrun(db.Model):
 	import os.path
 	filename='Tars/robertson_' + self.date + '_' + self.archivetext.archive_number + '_jp2_' + self.classifier + '_full.tar.gz'
 	if os.path.isfile(APP_ROOT + '/static/' + filename):
-		#print "yep, ", filename, "is a file"
+		print "yep, ", filename, "is a file"
         	return url_for('static', filename=filename)
 	else:
 		filename = 'Tars/robertson_' + self.date + '_' + self.archivetext.archive_number + '_' + self.classifier + '_full.tar.gz'
 		if os.path.isfile(APP_ROOT + '/static/' + filename):
-                	#print "yep, ", filename, "is a file"
+                	print "yep, ", filename, "is a file"
                 	return url_for('static', filename=filename)
 		else:
 			return None
@@ -73,12 +75,12 @@ class Ocrrun(db.Model):
 	import os.path
         filename='Zips/robertson_' + self.date + '_' + self.archivetext.archive_number + '_jp2_' + self.classifier + '_full.zip'
         if os.path.isfile(APP_ROOT + '/static/' + filename):
-                #print "yep, ", filename, "is a file"
+                print "yep, ", filename, "is a file"
                 return url_for('static', filename=filename)
         else:
                 filename = 'Zips/robertson_' + self.date + '_' + self.archivetext.archive_number + '_' + self.classifier + '_full.zip'
                 if os.path.isfile(APP_ROOT + '/static/' + filename):
-                        #print "yep, ", filename, "is a file"
+                        print "yep, ", filename, "is a file"
                         return url_for('static', filename=filename)
                 else:
                         return None
@@ -137,6 +139,7 @@ class Outputpage(db.Model):
 
 
 @app.route('/')
+@requires_auth
 def index():
     from flask import render_template
     return render_template('index.html')
@@ -239,11 +242,16 @@ def query():
     run_details['date'] = request.args.get('date', '')
     run_details['view'] = request.args.get('view', '')
     html_path = textpath_for_run_details(run_details)
-    return side_by_side_view(html_path)
+    return side_by_side_view2(html_path)
 
 def make_pagination_array(sister_outputpages, this_page, steps):
     this_index = sister_outputpages.index(this_page)
+    print "this_index", this_index
     stepsize = int(len(sister_outputpages)/ steps)
+    if stepsize == 0:
+	stepsize = 1
+        steps = len(sister_outputpages)
+    print "stepsize:", stepsize
     my_place = (this_index / stepsize)
     pagination_array = []
     is_current = False
@@ -394,40 +402,78 @@ def runs(text_id):
     print text
     return render_template('runs.html', text_info = text)
 
+def add_css(etree,head_element, a_filename):
+    css_file = url_for('static', filename=a_filename)
+    style = etree.SubElement(
+            head_element, "link", rel="stylesheet", type="text/css",
+            href=css_file)
+    return etree
+
+def add_html_csses(etree,head_element):
+    for css_file in ['hocr.css','spellcheck_report.css','tipsy.css']:
+        add_css(etree, head_element, css_file)
+    return etree
+
+def add_javascript(etree, head_element, a_script):
+    javascript_file = url_for('static', filename=a_script)
+    javascript_link = etree.SubElement(
+            head_element, "script", type="text/javascript",
+            src=javascript_file)
+    return etree
+
+def add_html_javascripts(etree, head_element):
+    for js_file in ['javascripts/tipsy.hocr.js', "javascripts/jquery.focus.js", "javascripts/jquery.tipsy.js"]:#, "javascripts/edit.js"]:
+        add_javascript(etree, head_element, js_file)
+    return etree
+
+#def add_editable_tags(etree, head_element):
+#     dl_button = etree.SubElement(
+#     [ b.tag for b in root.iterfind(".//span") ]
 
 @app.route('/text/<path:textpath>')
-
 
 def view_html(textpath):
     from local_settings import textpath_root
     from lxml import etree
     import unicodedata
+    from flask import Response
     try:
         a =  open(textpath_root+textpath)
     except Exception as e:
-        from flask import render_template
-        return render_template('nohtmlfile.html')
+        print e
+        #from flask import render_template
+        #return render_template('nohtmlfile.html')
     #print "app root: ", APP_ROOT
     try:
         tree = etree.parse(a)
-        root = tree.getroot()
         head_element = tree.xpath("/html:html/html:head | /html/head",
                                   namespaces={
                                   'html': "http://www.w3.org/1999/xhtml"})[0]
-        css_file = url_for('static', filename='hocr.css')
-        style = etree.SubElement(
-            head_element, "link", rel="stylesheet", type="text/css",
-            href=css_file)
-        span_elements = tree.xpath("//html:span | //span", namespaces={'html': "http://www.w3.org/1999/xhtml"})
+        #css_file = url_for('static', filename='hocr.css')
+        #style = etree.SubElement(
+        #    head_element, "link", rel="stylesheet", type="text/css",
+        #    href=css_file)
+        etree = add_html_csses(etree,head_element)
+        etree = add_html_javascripts(etree,head_element)
+        #etree = add_editable_tags(etree,head_element)
+        ocr_word_span_elements = tree.xpath("//html:span[@class='ocr_word'] | //span[@class='ocr_word']", namespaces={'html': "http://www.w3.org/1999/xhtml"})
         #Add onclick element so that clicking on the iframe's html will send the entire framing document
         #forward to the next page
         body = tree.xpath("//html:body | //body", namespaces={'html': "http://www.w3.org/1999/xhtml"})
         #body[0].set('onclick','return parent.page_forward()')
-        for span in span_elements:
-            span.tail = " "
-        output =  etree.tostring(root, pretty_print=True,encoding=unicode)
-        return unicodedata.normalize("NFC",output)
+        #Add html buttons for editing and downloading 
+        button1 = etree.SubElement(body[0], "a", download="get_filename()")
+        button1.text="Download"
+        button1.set("id","download")
+        button1.set("onclick",'$(this).attr(\'href\', \'data:text/attachement;charset=utf-8,%EF%BB%BF\' + $(\'html\').clone().find(\'#download\').remove().end()[0].outerHTML);');
+	button1.set("style","display: none;");
+	for span in ocr_word_span_elements:
+            span.set("contenteditable","true");
+        print "file ", textpath, " has doctype ", tree.docinfo.doctype
+        output =  etree.tostring(tree, pretty_print=True,encoding=unicode,doctype='<!DOCTYPE html>')# PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">')
+        return Response(unicodedata.normalize("NFC",output), mimetype='application/xhtml+xml')
     except Exception as e:
+	print e
         from flask import render_template
         return render_template('nohtmlfile.html')
 	#print "We're upset about:", e

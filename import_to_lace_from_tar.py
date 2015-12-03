@@ -57,8 +57,9 @@ for file_in in sys.argv[1:]:
         if DEBUG:
             print "rdb:", run_dir_base
             print 'runs: ', runs
-    except:
-        print 'no runs for', info['identifier']
+    except Exception as e:
+        print e
+        print('no runs for "%s"' % info['identifier'])
         print 'are you sure', file_in, 'is a archive tar file?'
         runs = None#raise
     this_date_runs = [run for run in runs if run['date'] == date]
@@ -117,6 +118,7 @@ for file_in in sys.argv[1:]:
                     except ValueError:
                         try:
                             (name, page_number) = os.path.basename(hocr_file)[:-5].split('_')
+                            thresh_value= 0
                             if DEBUG:
                                 print 'page', page_number
                                 print 'output type', output_type

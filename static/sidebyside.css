@@ -41,7 +41,7 @@ pre {
 /*       position: absolute; 
        top: 0; 
        left: 0; */
-       background-color: #666; 
+       background-color: #440044; 
        width: 100%; 
        color: #fff;
        padding: 7px;
@@ -108,6 +108,7 @@ h3.textinfo a {
 	color: inherit;
 }
 p.data {
+	margin-top: 10px;
 	font-family:'Droid Sans';
 	font-size: 10pt;
 }

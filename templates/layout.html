@@ -2,6 +2,7 @@
 <html>
 <head>
 {% block head %}
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='sidebyside.css') }}"/>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='pagination.css') }}"/>
 {% block scripts %}
@@ -27,7 +28,7 @@
 </div>
 {% block top %}
 {% if text_info %}
-  <h1>{{ text_info['title'] }}</h1>
+  <h1>Foo{{ text_info['title'] }} </h1>
 {% else %}
 <h1>Rigaudon Greek OCR</h1>
 {% endif %}
