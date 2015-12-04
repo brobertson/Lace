@@ -15,11 +15,18 @@ $(function() {
             $(this).attr("data-spellcheck-mode", "Manual");
             var focusables = $(".ocr_word");
             var current = focusables.index(this);
-            console.log(window.location);
             var path_array = window.location.pathname.split("/")
-            console.log(path_array[path_array.length - 1])
             next = focusables.eq(current + 1).length ? focusables.eq(current + 1) : focusables.eq(0);
-            next.focus();
+            if (e.shiftKey == true) {
+              console.log("shift is down")
+              console.log($(next).attr("data-spellcheck-mode"));
+              while ($(next).attr("data-spellcheck-mode") === "True" || $(next).attr("data-spellcheck-mode") === "Manual") {
+                $(next).attr("data-spellcheck-mode", "Manual");
+                next_index = focusables.index(next);
+                next = focusables.eq(next_index + 1).length ? focusables.eq(next_index + 1) : focusables.eq(0);
+                }
+            }
+            next.focus()
             var all_manually_edited = true;
             $(".ocr_word").each(function(index, element) {
                 if ($(element).attr("data-spellcheck-mode") !== "Manual") {
