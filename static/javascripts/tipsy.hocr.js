@@ -20,7 +20,7 @@ $(function() {
             if (e.shiftKey == true) {
               console.log("shift is down")
               console.log($(next).attr("data-spellcheck-mode"));
-              while ($(next).attr("data-spellcheck-mode") === "True" || $(next).attr("data-spellcheck-mode") === "Manual") {
+              while ($(next).attr("data-spellcheck-mode") === "True" || $(next).attr("data-spellcheck-mode") === "Manual" || $(next).attr("data-spellcheck-mode") === "TrueLower"){
                 $(next).attr("data-spellcheck-mode", "Manual");
                 next_index = focusables.index(next);
                 next = focusables.eq(next_index + 1).length ? focusables.eq(next_index + 1) : focusables.eq(0);
