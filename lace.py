@@ -503,7 +503,7 @@ def side_by_side_view2(outputpage_id):
     sorted_sister_outputpages = sorted(sorted_sister_outputpages, key=lambda outputpage: outputpage.page_number)
     this_page_index = sorted_sister_outputpages.index(this_page)
     page_before_exists = (not this_page_index == 0)
-    page_after_exists = (not this_page_index == number_of_sister_pages)
+    page_after_exists = (not this_page_index == (number_of_sister_pages - 1))
     if page_before_exists:
         page_before_id = sorted_sister_outputpages[this_page_index -1].id
         page_before = url_for('side_by_side_view2',outputpage_id = str(page_before_id))
