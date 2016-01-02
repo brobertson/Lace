@@ -18,9 +18,9 @@ $(function() {
             var path_array = window.location.pathname.split("/")
             next = focusables.eq(current + 1).length ? focusables.eq(current + 1) : focusables.eq(0);
             if (e.shiftKey == true) {
-              console.log("shift is down")
-              console.log($(next).attr("data-spellcheck-mode"));
-              while ($(next).attr("data-spellcheck-mode") === "True" || $(next).attr("data-spellcheck-mode") === "Manual" || $(next).attr("data-spellcheck-mode") === "TrueLower"){
+              //First, make sure we don't get into endless loop when all are edited. Next only rip through the ones that are True,
+              //Edited (Manual) or TrueLower
+              while (focusables.index(next) != 0 && ($(next).attr("data-spellcheck-mode") === "True" || $(next).attr("data-spellcheck-mode") === "Manual" || $(next).attr("data-spellcheck-mode") === "TrueLower")){
                 $(next).attr("data-spellcheck-mode", "Manual");
                 next_index = focusables.index(next);
                 next = focusables.eq(next_index + 1).length ? focusables.eq(next_index + 1) : focusables.eq(0);
