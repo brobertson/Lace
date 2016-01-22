@@ -461,6 +461,8 @@ def view_html(textpath):
         #forward to the next page
         body = tree.xpath("//html:body | //body", namespaces={'html': "http://www.w3.org/1999/xhtml"})
         #body[0].set('onclick','return parent.page_forward()')
+        page = tree.xpath("//html:div[@class='ocr_page'] | div[@class='ocr_page']", namespaces={'html': "http://www.w3.org/1999/xhtml"})
+        page[0].set("title",textpath[13:]);
         #Add html buttons for editing and downloading 
         button1 = etree.SubElement(body[0], "a", download="get_filename()")
         button1.text="Download"
