@@ -1,5 +1,5 @@
 @import url("http://fonts.googleapis.com/css?family=Cardo"); 
-
+@import url("http://fonts.googleapis.com/css?family=Lato");
 /* put hyphen in name to distinguish from regular font
 */
 @font-face {
@@ -22,7 +22,10 @@ span.ocr_word {
 }
 */
 body {
-  font-family: 'GFS-Porson', 'New Athena Unicode', 'GFS Philostratos',  'Cardo', 'GFS-Porson', serif;
+  font-family: 'GFS-Porson', 'Lato';
+/*
+  font-family:  'GFS-Porson', 'New Athena Unicode', 'GFS Philostratos', serif;
+*/
   font-size: 16px;
   background: #eec;
   line-height: 130%;
