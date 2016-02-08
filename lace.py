@@ -426,6 +426,16 @@ def add_html_javascripts(etree, head_element):
         add_javascript(etree, head_element, js_file)
     return etree
 
+
+def get_xmldb(textpath):
+    from lxml import etree
+    query_base = "http://heml.mta.ca:8080/exist/apps/laceApp/getFile.xq?filePath="
+    #cut the 'static/Texts/' from the front of the textpath
+    textpath = textpath[13:]
+    print "altered textpath is", textpath
+    tree = etree.parse(query_base + textpath)
+    return tree
+
 #def add_editable_tags(etree, head_element):
 #     dl_button = etree.SubElement(
 #     [ b.tag for b in root.iterfind(".//span") ]
@@ -437,15 +447,19 @@ def view_html(textpath):
     from lxml import etree
     import unicodedata
     from flask import Response
+    is_from_xmldb = False
     try:
-        a =  open(textpath_root+textpath)
+        tree = get_xmldb(textpath)
+        is_from_xmldb = True
     except Exception as e:
         print e
-        #from flask import render_template
-        #return render_template('nohtmlfile.html')
-    #print "app root: ", APP_ROOT
+        try:
+            print "hello, xmldb failed. textpath is", textpath
+            a =  open(textpath_root+textpath)
+            tree = etree.parse(a)
+        except Exception as e:
+            print e
     try:
-        tree = etree.parse(a)
         head_element = tree.xpath("/html:html/html:head | /html/head",
                                   namespaces={
                                   'html': "http://www.w3.org/1999/xhtml"})[0]
@@ -454,6 +468,8 @@ def view_html(textpath):
         #    head_element, "link", rel="stylesheet", type="text/css",
         #    href=css_file)
         etree = add_html_csses(etree,head_element)
+        if is_from_xmldb:
+            etree = add_css(etree,head_element,"is_xmldb.css")
         etree = add_html_javascripts(etree,head_element)
         #etree = add_editable_tags(etree,head_element)
         ocr_word_span_elements = tree.xpath("//html:span[@class='ocr_word'] | //span[@class='ocr_word']", namespaces={'html': "http://www.w3.org/1999/xhtml"})

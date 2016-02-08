@@ -27,6 +27,7 @@ $(function() {
         if (e.which == 13) {
             e.preventDefault();
             var data = {};
+            console.log(this.constructor.name);
             update_xmldb(this);
             /*alert($(this).text());
 	    data['value'] = $(this).text();
@@ -44,9 +45,12 @@ $(function() {
               //First, make sure we don't get into endless loop when all are edited. Next only rip through the ones that are True,
               //Edited (Manual) or TrueLower
               while (focusables.index(next) != 0 && ($(next).attr("data-spellcheck-mode") === "True" || $(next).attr("data-spellcheck-mode") === "Manual" || $(next).attr("data-spellcheck-mode") === "TrueLower")){
-                $(next).attr("data-spellcheck-mode", "Manual");
                 update_xmldb(next);
+                console.log(next.constructor.name);
+                console.log(next);
+                $(next).attr("data-spellcheck-mode", "Manual");
                 next_index = focusables.index(next);
+		alert(next_index);
                 next = focusables.eq(next_index + 1).length ? focusables.eq(next_index + 1) : focusables.eq(0);
                 }
             }

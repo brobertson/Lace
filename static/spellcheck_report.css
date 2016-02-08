@@ -35,6 +35,9 @@ span[data-spellcheck-mode="None"] {
 span[data-spellcheck-mode="Manual"] {
     background-color: #CCFFFF;
 }
+span[data-manually-confirmed="true"] {
+    background-color: #E5FFFF;
+}
 
 #download {
   display: block;
