@@ -1,10 +1,13 @@
 # -*- coding: UTF-8 -*-
-from flask import Flask, url_for, request, abort
+from flask import Flask, url_for, request, abort, send_file
 from flask.ext.sqlalchemy import SQLAlchemy
 from settings import APP_ROOT, POSSIBLE_HOCR_VIEWS,PREFERENCE_OF_HOCR_VIEWS
 from local_settings import database_uri
 from flaskext.markdown import Markdown
 from authentication import requires_auth
+from PIL import Image
+import StringIO
+import urllib
 app = Flask(__name__)
 Markdown(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
@@ -224,6 +227,32 @@ def url_for_page_image(text_id, page_num):
         '_color/' + text_id + '_' + pad_page_num_for_archive(str(page_num)) + '.jpg'
     return url_for('static', filename=file_address)
 
+def bbox_to_array(bbox_string):
+    fudge = 20 
+    elements = bbox_string.split(' ')
+    elements = elements[1:]
+    elements = [int(x) for x in elements]
+    elements = [elements[0] - fudge, elements[1] - fudge, elements[2], elements[3]  ]
+    return elements
+
+def image_region_from_bbox_string(image, bbox_string):
+    image_scale = 0.3
+    values = bbox_to_array(bbox_string)
+    values = [int(image_scale*x) for x in values]
+    region = image.crop(values)
+    return region
+
+def serve_pil_image(pil_img):
+    img_io = StringIO.StringIO()
+    pil_img.save(img_io, 'JPEG', quality=70)
+    img_io.seek(0)
+    return send_file(img_io, mimetype='image/jpeg')
+
+def encode_pil_image(pil_img):
+       img_io = StringIO.StringIO()
+       pil_img.save(img_io, 'JPEG', quality=70)
+       img_io.seek(0)
+       return img_io.getvalue().encode("base64")
 
 def url_for_run_details(endpoint, run_details):
     return url_for(endpoint, text_id=run_details['text_id'],
@@ -402,6 +431,20 @@ def runs(text_id):
     print text
     return render_template('runs.html', text_info = text)
 
+@app.route('/image_test', methods=['GET'])
+def serve_img():
+    from flask import render_template
+    bbox = request.args.get('bbox')
+    file_name = request.args.get('file')
+    image_file = file_name.split('.')[0] + '.jpg'
+    book = request.args.get('book')
+    book = book.split('/')[-1]
+    img = Image.open('/mnt/Europe/Lace_Resources/Images/Color/' + book + '_color/' + image_file)
+    #img = Image.open('/mnt/Europe/Lace_Resources/Images/Color/490021999brucerob_color/490021999brucerob_0100.jpg')
+    image_region = image_region_from_bbox_string(img, bbox)
+    #return render_template("test.html", img_data=urllib.quote(encode_pil_image(image_region).rstrip('\n')))
+    return serve_pil_image(image_region)
+
 def add_css(etree,head_element, a_filename):
     css_file = url_for('static', filename=a_filename)
     style = etree.SubElement(
@@ -415,7 +458,10 @@ def add_html_csses(etree,head_element):
     return etree
 
 def add_javascript(etree, head_element, a_script):
-    javascript_file = url_for('static', filename=a_script)
+    if a_script[0:5] == 'http:':
+         javascript_file = a_script
+    else:
+        javascript_file = url_for('static', filename=a_script)
     javascript_link = etree.SubElement(
             head_element, "script", type="text/javascript",
             src=javascript_file)

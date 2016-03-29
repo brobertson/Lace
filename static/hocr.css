@@ -51,6 +51,13 @@ p{
     padding: 0;
 }
 
+span.inserted_line {
+  border-style: dashed;
+    border-width: 2px;
+  border-color: green;
+  display: inline-block;
+  min-width:200px;
+}
 p span:first-child {
 	text-indent: 2em;
 }

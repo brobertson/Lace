@@ -5,17 +5,16 @@ span[data-spellcheck-mode] {
    margin-left: 2px;
    margin-right: 2px;
 }
-span[data-spellcheck-mode="True"] { 
-    background-color: #88CC88;
-}
-span[data-spellcheck-mode="TrueLower"] {
-    background-color: #55AA55;
+span[data-spellcheck-mode="True"],
+span[data-spellcheck-mode="TrueLower"]
+ { 
+    background-color: #C9E8C9;
 }
 span[data-spellcheck-mode^="Sub"] {
     background-color: #BFCE67;
 }
 span[data-spellcheck-mode="NoAcc"] {
-    background-color: #116611;
+    background-color: #A6D9A6;
 }
 span[data-spellcheck-mode^="Dedup"] {
     background-color: #EBF7A5;
@@ -30,7 +29,7 @@ span[data-spellcheck-mode="PunctStrip"] {
     background-color: #2D882D;
 }
 span[data-spellcheck-mode="None"] {
-    background-color: #FFAAAA;
+    background-color: #FFCCCC;
 }
 span[data-spellcheck-mode="Manual"] {
     background-color: #CCFFFF;
