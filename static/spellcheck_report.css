@@ -50,6 +50,11 @@ span[data-manually-confirmed="true"] {
   font-weight: bold;
 }
 
+span.ocr_line[data-app-crit=true] { border-right-color: #341BFF; border-left-color: #341BFF;
+border-left-style: solid; border-right-style: solid;
+border-right-width: 2px; border-left-width: 2px;
+padding-right: 6px; padding-left: 6px;}
+
 /*.ocr_word:not([data-spellcheck-mode]) {
     background-color: #FFAAAA;
 }
