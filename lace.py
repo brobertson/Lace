@@ -2,7 +2,7 @@
 from flask import Flask, url_for, request, abort, send_file
 from flask.ext.sqlalchemy import SQLAlchemy
 from settings import APP_ROOT, POSSIBLE_HOCR_VIEWS,PREFERENCE_OF_HOCR_VIEWS
-from local_settings import database_uri
+from local_settings import database_uri, exist_db_uri
 from flaskext.markdown import Markdown
 from authentication import requires_auth
 from PIL import Image
@@ -188,6 +188,11 @@ def nextsteps():
 def faq():
     from flask import render_template
     return render_template('faq.html')
+
+@app.route('/guide')
+def guide():
+    from flask import render_template
+    return render_template('guide.html')
 
 @app.route('/datech14')
 def datech():
@@ -475,7 +480,7 @@ def add_html_javascripts(etree, head_element):
 
 def get_xmldb(textpath):
     from lxml import etree
-    query_base = "http://heml.mta.ca:8080/exist/apps/laceApp/getFile.xq?filePath="
+    query_base = exist_db_uri + "apps/laceApp/getFile.xq?filePath="
     #cut the 'static/Texts/' from the front of the textpath
     textpath = textpath[13:]
     print "altered textpath is", textpath
@@ -489,7 +494,7 @@ def get_xmldb(textpath):
 @app.route('/text/<path:textpath>')
 
 def view_html(textpath):
-    from local_settings import textpath_root
+    from local_settings import textpath_root 
     from lxml import etree
     import unicodedata
     from flask import Response
