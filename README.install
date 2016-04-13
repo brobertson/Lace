@@ -1,5 +1,30 @@
-sudo apt-get install libmysqlclient-dev python-pip python-dev
+sudo apt-get install libmysqlclient-dev python-pip python-dev sqlite3
 sudo pip install Flask
 sudo pip install Flask-SQLAlchemy
 sudo pip install Flask-Markdown
 sudo pip install MySQL-python
+cd Lace
+cp example_local_settings.py local_settings.py
+vim local_settings.py
+#change to your local database uri: use sqlite3 for temporary use 
+
+#Now install a text resource into the filestructure under static/Texts and 
+#put its metadata in the database
+python ./import_to_lace_from_tar.py samples/robertson_2016-04-03-16-14_alciphronisrhet01schegoog_teubner-serif-2013-12-16-11-26-00067000.pyrnn.gz_full.tar.gz-processed
+#Note that, for convenience, the corresponding images are already stored 
+#in Lace/static/Images/Color
+
+python ./lace.py
+
+#open Chrome at localhost:5000
+#Click on 'Texts', there should be one, click on it, and on 'selected_hocr_output' 
+#Both text and image should appear
+#Clicking on text should cause a popup with word image to appear
+
+
+#### Editing ####
+
+#For editing, install eXist-db 2.2 or higher, and upload to it the resources
+at Lace/eXist-db/db 
+#set exist_db_uri variable in Lace/local_settings.py appropriately
+
