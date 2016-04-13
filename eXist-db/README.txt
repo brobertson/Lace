@@ -1,11 +1,6 @@
-The zip file in this directory is a full backup of the eXist-db database that 
-corresponds to the current state of the Lace viewing and editing service. Note 
-that installing eXist-db is only necessary for editing texts.
+The db/ file in this directory contains the data necessary to do editing within
+Lace using an eXist-db repository. The files therein should be uploaded to
+your eXist-db instance.
 
-You should 'restore' this into a eXist 2.2+ database using the instructions at 
-http://exist-db.org/exist/apps/doc/backup.xml 
+*******This is not yet a secure system. It assumes a username/password pair of laceUser/laceUser for all transactions with the database, for instance.********
 
-Doing a 'restore' will overwrite any files by the same time in your already-running
-eXist-db server, possibly including your user data. 
-
-**** It is probably only safe to do this on a fresh install. ****
