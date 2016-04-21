@@ -451,14 +451,17 @@ def serve_img():
     return serve_pil_image(image_region)
 
 def add_css(etree,head_element, a_filename):
-    css_file = url_for('static', filename=a_filename)
+    if a_filename[0:5] == 'http:':
+         css_file = a_filename
+    else:
+        css_file = url_for('static', filename=a_filename)
     style = etree.SubElement(
             head_element, "link", rel="stylesheet", type="text/css",
             href=css_file)
     return etree
 
 def add_html_csses(etree,head_element):
-    for css_file in ['hocr.css','spellcheck_report.css','tipsy.css']:
+    for css_file in ['hocr.css','spellcheck_report.css','tipsy.css','http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css']:
         add_css(etree, head_element, css_file)
     return etree
 
@@ -473,8 +476,9 @@ def add_javascript(etree, head_element, a_script):
     return etree
 
 def add_html_javascripts(etree, head_element):
-    for js_file in ['javascripts/tipsy.hocr.js', "javascripts/jquery.focus.js", "javascripts/jquery.tipsy.js"]:#, "javascripts/edit.js"]:
-        add_javascript(etree, head_element, js_file)
+    #for js_file in ["javascripts/jquery.focus.js", "http://code.jquery.com/jquery-1.10.2.js", "http://code.jquery.com/ui/1.11.4/jquery-ui.js", 'javascripts/jquery.tipsy.js','javascripts/tipsy.hocr.js', 'javascripts/cts_input.js']:
+    for js_file in ["http://code.jquery.com/jquery-1.10.2.js", "http://code.jquery.com/ui/1.11.4/jquery-ui.js", 'javascripts/jquery.tipsy.js','javascripts/tipsy.hocr.js', 'javascripts/cts_input.js']:
+       add_javascript(etree, head_element, js_file)
     return etree
 
 

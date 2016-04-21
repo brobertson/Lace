@@ -3,6 +3,12 @@ function get_filename() {
     return path_array[path_array.length - 1]
 }
 
+function updateCTSURN(inputField,ui) {
+    alert(ui.item.value + inputField.val());
+    inputField.attr("data-cts-urn",ui.item.value);
+    //replace this with your own function that does what you want with this change
+   }
+
 function update_xmldb(element, e) {
             var data = {};
             data['shift'] = e.shiftKey
@@ -45,6 +51,22 @@ function add_line_below_xmldb(element, e,uniq) {
             var filePath = doc.substring(0,n);
             data['filePath'] = filePath
             $.post('http://heml.mta.ca:8080/exist/apps/laceApp/addLineBelow.xq',data)
+}
+
+function add_index_after(element, e,uniq) {
+            var data = {};
+            data['shift'] = e.shiftKey
+            data['value'] = $(element).text();
+            data['id'] = element.id;
+            data['uniq'] = uniq;
+            doc = $('.ocr_page').attr('title')
+            data['doc'] = doc
+            var n = doc.lastIndexOf('/');
+            var fileName = doc.substring(n + 1);
+            data['fileName'] = fileName
+            var filePath = doc.substring(0,n);
+            data['filePath'] = filePath
+            $.post('http://heml.mta.ca:8080/exist/apps/laceApp/addIndexWordAfter.xq',data)
 }
 
 function generate_image_tag_call(book_name, page_file, bbox) {
@@ -98,6 +120,57 @@ $(function() {
     $('.ocr_word').bind('keypress', function(e) { 
         if (e.which == 13) {
          e.preventDefault();
+         if (e.altKey == true) {
+           if (e.ctrlKey == false) {
+            //alert("that's it");
+            var uniq = 'ins_word_' + (new Date()).getTime();
+            var index_word = $( "<span class='index_word' id='" + uniq + "' data-manually-confirmed='false' contenteditable='true'/>" )
+            $(this).after(index_word);
+            add_index_after(this,e,uniq);
+            $('.ocr_page').on('keypress', '.index_word', function(e) {
+               if (e.which == 13) {
+                  e.preventDefault();
+                  update_xmldb(this, e);
+                  $(this).attr("data-manually-confirmed", "true");
+               }
+            });
+            index_word.focus()
+            return;//this is the trick to short-circuiting the function.
+         }
+       
+       else {//ctrlKey is true
+        var uniq = 'ins_cts_picker_' + (new Date()).getTime();
+            var cts_picker = $( "<!--div class='ui-widget'--><label for='" + uniq + "'>New Work:</label><input id='" + uniq + "' data-cts-urn='urn:cts:greekLit:tlg0001.tlg001:' value='Apollonius of Rhodes\", Argonautica'/><!--/div-->")
+var availableTags = [
+{label: "\"Apollonius of Rhodes\", Argonautica", value : "urn:cts:greekLit:tlg0001.tlg001:" },
+{label: "\"Theognis of Megara\", Elegies", value : "urn:cts:greekLit:tlg0002.tlg001:" },
+{label: "Thucydides, Histories", value : "urn:cts:greekLit:tlg0003.tlg001:" },
+{label: "\"Diogenes Laertius\", Lives and Opinions of Eminent Philosophers", value : "urn:cts:greekLit:tlg0004.tlg001:" },
+{label: "Theocritus, Idylls", value : "urn:cts:greekLit:tlg0005.tlg001:" },
+{label: "Theocritus, Syrinx", value : "urn:cts:greekLit:tlg0005.tlg003:" },
+{label: "Euripides, Fragments of Phaethon", value : "urn:cts:greekLit:tlg0006.tlg023:" },
+{label: "Euripides, Cyclops", value : "urn:cts:greekLit:tlg0006.tlg034:" },
+{label: "Euripides, Alcestis", value : "urn:cts:greekLit:tlg0006.tlg035:" },
+{label: "Euripides, Medea", value : "urn:cts:greekLit:tlg0006.tlg036:" },
+{label: "Euripides, The Heraclids", value : "urn:cts:greekLit:tlg0006.tlg037:" },
+{label: "Euripides, Hippolytus", value : "urn:cts:greekLit:tlg0006.tlg038:" }
+]
+var options = {
+source: availableTags,
+select: function( event, ui ) {
+          event.preventDefault();
+          $(this).val(ui.item.label);  },
+change: function (event, ui) { updateCTSURN($(this),ui);}
+}
+var selector = '#' + uniq
+$(this).before(cts_picker);
+
+$(document).on('keydown.autocomplete', selector, function() {
+    $(this).autocomplete(options);
+});
+            return;//this is the trick to short-circuiting the function.
+ }
+}
           if (e.shiftKey == false) {
             var data = {};
             console.log(this.constructor.name);
@@ -110,8 +183,8 @@ $(function() {
                   $(this).text(new_form);
                   $(this).attr("data-manually-confirmed", "true");
                });
-             }
-            else {
+             }//end e.ctrlKey == true
+            else {//ctrlKey == false
                update_xmldb(this, e);
             }
             /*alert($(this).text());

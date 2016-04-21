@@ -31,14 +31,23 @@ body {
   line-height: 130%;
 }
 
-span.ocr_word:first-of-type {
+span.ocr_word, span.index_word:first-of-type {
     margin-left:0;
 }
 
-span.ocr_word:last-of-type {
+span.ocr_word, span.index_word:last-of-type {
     margin-right:0;
 }
 
+span.index_word {
+
+  border-style: dashed;
+    border-width: 2px;
+  border-color: red;
+  margin-left: 5px;
+  min-width: 25px;/* This doesn't seem to work for some reason */
+  color: #C0C0C0;
+}
 span.ocr_line {
     display: block;
 }
@@ -58,6 +67,7 @@ span.inserted_line {
   display: inline-block;
   min-width:200px;
 }
+
 p span:first-child {
 	text-indent: 2em;
 }
