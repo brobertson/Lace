@@ -88,6 +88,9 @@ clear:both;
 font-size: 10pt;
 }
 
+#textFrame {
+border: none;
+}
 p {
 font-family: 'Cardo', serif;
 font-size: 12pt;
