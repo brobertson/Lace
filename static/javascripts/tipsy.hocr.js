@@ -70,7 +70,7 @@ function add_index_after(element, e,uniq) {
 }
 
 function generate_image_tag_call(book_name, page_file, bbox) {
-	var request = "<img src=\"/secretlace/image_test?book=" + encodeURIComponent(book_name) + "&amp;file=" + encodeURIComponent(page_file) + "&amp;bbox=" + encodeURIComponent(bbox) + "\" alt='a word image'/>"
+	var request = "<img src=\"/image_test?book=" + encodeURIComponent(book_name) + "&amp;file=" + encodeURIComponent(page_file) + "&amp;bbox=" + encodeURIComponent(bbox) + "\" alt='a word image'/>"
 	return request
 }
 

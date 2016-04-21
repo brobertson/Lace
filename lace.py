@@ -444,7 +444,7 @@ def serve_img():
     image_file = file_name.split('.')[0] + '.jpg'
     book = request.args.get('book')
     book = book.split('/')[-1]
-    img = Image.open('/mnt/Europe/Lace_Resources/Images/Color/' + book + '_color/' + image_file)
+    img = Image.open(APP_ROOT + '/static/Images/Color/' + book + '_color/' + image_file)
     #img = Image.open('/mnt/Europe/Lace_Resources/Images/Color/490021999brucerob_color/490021999brucerob_0100.jpg')
     image_region = image_region_from_bbox_string(img, bbox)
     #return render_template("test.html", img_data=urllib.quote(encode_pil_image(image_region).rstrip('\n')))
@@ -498,7 +498,6 @@ def get_xmldb(textpath):
 @app.route('/text/<path:textpath>')
 
 def view_html(textpath):
-    from local_settings import textpath_root 
     from lxml import etree
     import unicodedata
     from flask import Response
@@ -510,7 +509,7 @@ def view_html(textpath):
         print e
         try:
             print "hello, xmldb failed. textpath is", textpath
-            a =  open(textpath_root+textpath)
+            a =  open(APP_ROOT+ '/' + textpath)
             tree = etree.parse(a)
         except Exception as e:
             print e
