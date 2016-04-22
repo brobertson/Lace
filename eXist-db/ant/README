@@ -1,0 +1,2 @@
+ant -f adduser.xml -Dpath=/usr/local/eXist-db -Dlogin=laceuser -Dsecret=laceuser -Duser.group=laceuser -Droot.login=admin -Droot.password=foo -Dexist.uri=localhost:8080
+

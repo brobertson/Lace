@@ -1,0 +1,27 @@
+<project basedir="." default="default" name="ANTProject">
+
+     <property file="load.properties"/>
+
+     <path id="classpath.core">
+      <fileset dir="${path}/lib/core">
+       <include name="*.jar"/>
+      </fileset>
+      <pathelement path="${path}\exist.jar"/>
+      <pathelement path="${path}\exist-optional.jar"/>
+     </path>
+
+     <typedef resource="org/exist/ant/antlib.xml" uri="http://exist-db.org/ant">
+      <classpath refid="classpath.core"/>
+     </typedef>
+
+     <target name="default">
+
+      <echo message="Création du compte ${login}"/>
+      <xdb:adduser xmlns:xdb="http://exist-db.org/ant" 
+       uri="xmldb:exist://${exist.uri}/exist/xmlrpc/db"
+       name="${login}" secret="${password}" primaryGroup="${user.group}" user="${root.login}"
+       password="${root.password}"/>
+
+     </target>                 
+
+</project>
