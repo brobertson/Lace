@@ -14,7 +14,7 @@
       <classpath refid="classpath.core"/>
      </typedef>
 
-     <target name="default">
+     <target name="addUser">
 
       <echo message="Création du compte ${login}"/>
       <xdb:adduser xmlns:xdb="http://exist-db.org/ant" 
@@ -23,5 +23,10 @@
        password="${root.password}"/>
 
      </target>                 
+
+     <target name="default">
+     <xdb:chmod xmlns:xdb="http://exist-db.org/ant"
+uri="xmldb:exist://localhost:8080/exist/xmlrpc/db/apps/laceApp" resource="${update.file}" user="${root.login}"  password="${root.password}" permissions="rwxrwxrwx" />
+     </target>
 
 </project>
