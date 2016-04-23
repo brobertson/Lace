@@ -21,7 +21,7 @@ function update_xmldb(element, e) {
             data['fileName'] = fileName
             var filePath = doc.substring(0,n);
             data['filePath'] = filePath
-            $.post('http://heml.mta.ca:8080/exist/apps/laceApp/updateWord.xq',data)
+            $.post(exist_server_address + '/exist/apps/laceApp/updateWord.xq',data)
 }
 
 function update_all_xmldb(element, e) {
@@ -34,7 +34,7 @@ function update_all_xmldb(element, e) {
             var collectionPath = doc.substring(0,n);
             data['collectionPath'] = collectionPath
             //alert("would have updated " + data['query'] + " with " + data['correctedForm'] + " in all of " + data['collectionPath']);
-            $.post('http://heml.mta.ca:8080/exist/apps/laceApp/updateMany.xq',data)
+            $.post(exist_server_address + '/exist/apps/laceApp/updateMany.xq',data)
 }
 
 function add_line_below_xmldb(element, e,uniq) {
@@ -50,7 +50,7 @@ function add_line_below_xmldb(element, e,uniq) {
             data['fileName'] = fileName
             var filePath = doc.substring(0,n);
             data['filePath'] = filePath
-            $.post('http://heml.mta.ca:8080/exist/apps/laceApp/addLineBelow.xq',data)
+            $.post(exist_server_address + '/exist/apps/laceApp/addLineBelow.xq',data)
 }
 
 function add_index_after(element, e,uniq) {
@@ -66,7 +66,7 @@ function add_index_after(element, e,uniq) {
             data['fileName'] = fileName
             var filePath = doc.substring(0,n);
             data['filePath'] = filePath
-            $.post('http://heml.mta.ca:8080/exist/apps/laceApp/addIndexWordAfter.xq',data)
+            $.post(exist_server_address +  '/exist/apps/laceApp/addIndexWordAfter.xq',data)
 }
 
 function generate_image_tag_call(book_name, page_file, bbox) {
