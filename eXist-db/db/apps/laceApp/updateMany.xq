@@ -4,7 +4,9 @@ declare base-uri "http://www.w3.org/1999/xhtml";
 
 declare option exist:serialize "method=xhtml media-type=text/html indent=yes";
 import module namespace response = "http://exist-db.org/xquery/response";
-let $user := "laceUser"
+let $user := "admin"
+let $pass := "foo"
+
 let $dbroot := "/db/laceTest/"
 
 let $collectionPath := request:get-parameter('collectionPath', '')
@@ -16,7 +18,7 @@ let $data-collection := '/db/laceTest/830740755brucerob/2016-03-22-19-31_loeb_20
 
 (:  logs into the collection :)
 let $dbPath := concat($dbroot, $collectionPath)
-let $login := xmldb:login($dbPath, $user, $user)
+let $login := xmldb:login($dbPath, $user, $pass)
 let $foo1 := response:set-header("Access-Control-Allow-Origin", "*")
 (: put the search results into memory using the eXist any keyword ampersand equals comparison
 :)

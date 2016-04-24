@@ -2,8 +2,8 @@ xquery version "3.0";
 declare namespace xh="http://www.w3.org/1999/xhtml";
 import module namespace response = "http://exist-db.org/xquery/response";
 
-
-let $user := "laceUser"
+let $user := "admin"
+let $pass := "foo"
 let $dbroot := "/db/laceTest/"
 let $id := request:get-parameter('id', '')
 let $new := request:get-parameter('value', '')
@@ -13,7 +13,7 @@ let $filePath := request:get-parameter('filePath', '')
 
 (:  logs into the collection :)
 let $dbpath := concat($dbroot, $filePath)
-let $login := xmldb:login($dbpath, $user, $user)
+let $login := xmldb:login($dbpath, $user, $pass)
 
 
 let $foo1 := response:set-header("Access-Control-Allow-Origin", "*")
