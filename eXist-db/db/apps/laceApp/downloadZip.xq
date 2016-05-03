@@ -6,7 +6,7 @@ declare option exist:serialize "method=html5 media-type=text/html omit-xml-decla
 let $user := "admin"
 let $pass := "foo"
 
-let $dbroot := "/db/laceTest/"
+let $dbroot := "/db/laceData/"
 
 let $collectionPath := request:get-parameter('collectionPath', '')
 
