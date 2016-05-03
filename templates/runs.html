@@ -9,13 +9,15 @@
         var data = new google.visualization.DataTable();
 	data.addColumn('string', 'Date (click to view)');
         //data.addColumn('string', '');
-        data.addColumn('number', 'B-score');
+        data.addColumn('string', 'B-score');
         data.addColumn('string', 'Classifier');
-	data.addColumn('string', 'Raw Output From OCR Stages');
-        data.addColumn('string', 'Download Archive');
+	data.addColumn('string', 'OCR Stages');
+        data.addColumn('string', 'Completion');
+        data.addColumn('string', 'D/l Archive');
+        data.addColumn('string', 'D/l Edited');
         data.addRows([
 {% for run in text_info.date_sorted_runs() %}
-['{{ run.date}} <a href="{{ url_for('render_page',hocrtype_id=run.prefered_hocrtype().id)}}">View</a>', {{ run.total_b_score() }}, '{{ run.classifier }}', '{% for hocrtype in run.sorted_hocrtypes() %}<a href="{{ url_for('render_page',hocrtype_id=hocrtype.id)}}">{{hocrtype.hocr_type_string()}}</a><br/>{% endfor %}','{% if run.link_to_tar_file() %} <a href="{{run.link_to_tar_file()}}">.tar.gz</a> {% endif %} {% if run.link_to_zip_file() %} &nbsp;<a href="{{run.link_to_zip_file()}}">.zip</a> {% endif %}']{% if not loop.last %},{% endif %}
+['{{ run.date}} <a href="{{ url_for('render_page',hocrtype_id=run.prefered_hocrtype().id)}}">View</a>', '{{ run.db_correct() }}', '{{ run.classifier }}', '{% for hocrtype in run.sorted_hocrtypes() %}<a href="{{ url_for('render_page',hocrtype_id=hocrtype.id)}}">{{hocrtype.hocr_type_string()}}</a><br/>{% endfor %}', '{{ run.db_completed() }}', '{% if run.link_to_tar_file() %} <a href="{{run.link_to_tar_file()}}">.tar.gz</a> {% endif %} {% if run.link_to_zip_file() %} &nbsp;<a href="{{run.link_to_zip_file()}}">.zip</a> {% endif %}','<a href="{{run.exist_zip()}}">.zip</a>']{% if not loop.last %},{% endif %}
 {% endfor %}
         ]);
 

@@ -100,6 +100,36 @@ class Ocrrun(db.Model):
 
     def __repr__(self):
          return '<Ocrrun %r>' % (str(self.archivetext_id) + ' ' + self.date)
+    def exist_db_path(self):
+        #collectionPath=/alciphronisrhet01schegoog/2016-04-03-16-14_teubner-serif-2013-12-16-11-26-00067000.pyrnn.gz_selected_hocr_output
+       exist_db_path = self.archivetext.archive_number + "/" + self.date + "_" + self.classifier + "_selected_hocr_output"
+       return exist_db_path
+    def db_completed(self):
+       import urllib2
+       query = exist_db_uri + "apps/laceApp/count_completed.xq?collectionPath=" + self.exist_db_path()
+       try:
+          response = urllib2.urlopen(query)
+          value = response.read()
+          value = round(float(value),4)
+          return str(value) + "%"
+       except:
+          return "[database at '" + exist_db_uri + "' offline]"
+    def db_correct(self):
+       import urllib2
+       query = exist_db_uri + "apps/laceApp/countBScore.xq?collectionPath=" + self.exist_db_path()
+       try:
+          response = urllib2.urlopen(query)
+          value = response.read()
+          value = round(float(value),4)
+          return str(value) + "%"
+       except:
+          return "[database at '" + exist_db_uri + "' offline]"
+
+    def exist_zip(self):
+       from datetime import date
+       myZipName = self.archivetext.archive_number + "_" + date.today().strftime('%Y-%m-%d') + "_lace.zip"
+       value  =  "http://localhost:8899/exist/apps/laceApp/downloadZip.xq?collectionPath=" + self.exist_db_path() + "&zipName=" + myZipName
+       return value
 
 class Hocrtype(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -434,7 +464,7 @@ def runs(text_id):
     from flask import render_template
     text = Archivetext.query.filter_by(archive_number = text_id).first()
     print text
-    return render_template('runs.html', text_info = text)
+    return render_template('runs.html', text_info = text )
 
 @app.route('/image_test', methods=['GET'])
 def serve_img():
@@ -481,6 +511,16 @@ def add_html_javascripts(etree, head_element):
        add_javascript(etree, head_element, js_file)
     return etree
 
+# Not being used
+def get_count(collectionPath):
+    import urllib2
+    query_base = exist_db_uri + "apps/laceApps/count_completed.xq?collectionPath="
+    textpath = textpath[13:]
+    full_query = query_base + textpath
+    response = urllib2.urlopen(full_query)
+    value = response.read()
+    print "the count is: " + value
+    return value
 
 def get_xmldb(textpath):
     from lxml import etree
