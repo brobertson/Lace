@@ -80,6 +80,15 @@ If a word has been changed, all words in all pages of the text that had the orig
 <li><p>If a word is split in the editor, meaning that it apears in multiple boxes rather than altoghether in one, correct this by completing the word as it appears in the text in the first editing box and deleting the content of the subsequent box(es). If multiple words are detected as a single word, you may solve this by simple separating them by a <code>Space</code> as the computer will detect this as being seprate words.
 </p></li>
 </ol>
+<h3>Using Unicode</h3>
+Special reminders regarding character use in the editor:
+<ol>
+<p><li>The use of unicode characters is imperative to creating a convertable, searchable document. When using Greek characters, and especially a Greek keyboard, you must remember that the keys you use may not be the correct symbols which unicode requires. For example, when inserting left or right-angle brackets, you must use that specific symbol (ex. U+2329, Ps.) rather than the <code>less than</code> or <code>greater than</code> symbols found on your keyboard.
+</li></p>
+<p><li>When a character is unavalible on the standard keyboard, it is likely to be found in the index of Unicode characters which can be found via online search engine.
+</li></p>
+<p><li> Font is irrelivent when using unicode, so if a character must be pasted into the editing environment, although apearing likely on a different coloured background, the character, provided it is in fact unicode, will not be a problem to the editing software.
+</li></p>
 {% endblock %}
 {% block right_side %}
 {% endblock %}
