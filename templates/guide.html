@@ -77,6 +77,8 @@ If a word has been changed, all words in all pages of the text that had the orig
 </p></li>
 <li><p>Holding <code>Shift</code> down while pressing <code>Return</code> causes a new blank line to be inserted into the document, directly following the current one. This, too, is editable, but its content is not broken into words. Pressing <code>Return</code> in this line will save its content as expected. This allows one to add content to the page which has been missed by the OCR engine.
 </p></li>
+<li><p>If a word is split in the editor, meaning that it apears in multiple boxes rather than altoghether in one, correct this by completing the word as it appears in the text in the first editing box and deleting the content of the subsequent box(es). If multiple words are detected as a single word, you may solve this by simple separating them by a <code>Space</code> as the computer will detect this as being seprate words.
+</p></li>
 </ol>
 {% endblock %}
 {% block right_side %}
