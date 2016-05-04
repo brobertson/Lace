@@ -156,7 +156,7 @@ var availableTags = [
 {label: "Euripides, Hippolytus", value : "urn:cts:greekLit:tlg0006.tlg038:" }
 ]
 var options = {
-source: availableTags,
+source: ctsGreekTags,
 select: function( event, ui ) {
           event.preventDefault();
           $(this).val(ui.item.label);  },

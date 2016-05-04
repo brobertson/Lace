@@ -507,7 +507,7 @@ def add_javascript(etree, head_element, a_script):
 
 def add_html_javascripts(etree, head_element):
     #for js_file in ["javascripts/jquery.focus.js", "http://code.jquery.com/jquery-1.10.2.js", "http://code.jquery.com/ui/1.11.4/jquery-ui.js", 'javascripts/jquery.tipsy.js','javascripts/tipsy.hocr.js', 'javascripts/cts_input.js']:
-    for js_file in ["http://code.jquery.com/jquery-1.10.2.js", "http://code.jquery.com/ui/1.11.4/jquery-ui.js", 'javascripts/jquery.tipsy.js','javascripts/lace_config.js', 'javascripts/tipsy.hocr.js', 'javascripts/cts_input.js']:
+    for js_file in ["http://code.jquery.com/jquery-1.10.2.js", "http://code.jquery.com/ui/1.11.4/jquery-ui.js", 'javascripts/jquery.tipsy.js','javascripts/lace_config.js','javascripts/cts_greek_texts.js', 'javascripts/tipsy.hocr.js']:
        add_javascript(etree, head_element, js_file)
     return etree
 
