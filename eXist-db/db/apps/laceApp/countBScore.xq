@@ -18,7 +18,7 @@ let $login := xmldb:login($dbpath, $user, $pass)
 return doc("/db/laceData/alciphronisrhet01schegoog/2016-04-03-16-14_teubner-serif-2013-12-16-11-26-00067000.pyrnn.gz_selected_hocr_output")
 :)
 
-let $count := count(collection($dbpath)//xh:span[@data-manually-confirmed = 'true' or @data-spellcheck-mode = "True" or @data-spellcheck-mode = "TrueLower"])
+let $count := count(collection($dbpath)//xh:span[@data-spellcheck-mode = "True"])
 let $total := count(collection($dbpath)//xh:span[@class="ocr_word"])
 return ($count*100) div $total
 
