@@ -77,6 +77,20 @@ If a word has been changed, all words in all pages of the text that had the orig
 </p></li>
 <li><p>Holding <code>Shift</code> down while pressing <code>Return</code> causes a new blank line to be inserted into the document, directly following the current one. This, too, is editable, but its content is not broken into words. Pressing <code>Return</code> in this line will save its content as expected. This allows one to add content to the page which has been missed by the OCR engine.
 </p></li>
+<li><p>If a word is split in the editor, meaning that it apears in multiple boxes rather than altoghether in a single box, you may correct this error by completing the word as it appears in the text in the first editing box and deleting the content of the subsequent box(es). If multiple words are detected as a single word, you may solve this by simply separating them by a <code>Space</code> as the computer will detect this as being seprate words.
+</p></li>
+</ol>
+<h3>Using Unicode</h3>
+Special reminders regarding character use in the editor:
+<ol>
+<p><li>The use of unicode characters is imperative to creating a convertable, searchable document. When using Greek characters, and especially a Greek keyboard, you must remember that the keys you use may not be the correct symbols which unicode requires. For example, when inserting left or right-angle brackets, you must use that specific symbol (ex. U+2329, Ps.) rather than the <code>less than</code> or <code>greater than</code> symbols found on your keyboard. Due to the nature of unicode characters formatting bold or italic words is unnecessary.
+</li></p>
+<p><li>When a character is unavalible on the standard keyboard, it is likely to be found in the index of Unicode characters which can be found via online search engine.
+</li></p>
+<p><li> Font is irrelivent when using unicode, so if a character must be pasted into the editing environment, although likely apearing on a different coloured background, the character, provided it is unicode, will be detectable to the OCR engine.
+</li></p>
+<p><li>In order to transfer your keyboard to Greek there are various resources avalible online for both Mac and PC users to help with the creation of accents, breathing marks, and iota subscripts. Some programs make it possible to create on on-screen keyboard, which is controlled by <code>mouse</code>. Others may prefer to use their own keyboard in Greek Polytonic form.
+</li></p>
 </ol>
 {% endblock %}
 {% block right_side %}
