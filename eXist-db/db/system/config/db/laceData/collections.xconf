@@ -2,5 +2,6 @@
     <index xmlns:xs="http://www.w3.org/2001/XMLSchema">
         <fulltext default="none" attributes="false"/>
         <create qname="@data-manually-confirmed" type="xs:string"/>
+        <create qname="@data-spellcheck-mode" type="xs:string"/>
     </index>
 </collection>
