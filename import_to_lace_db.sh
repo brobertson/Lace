@@ -3,6 +3,10 @@ if [ -z "${EXIST_HOME}" ]; then
     echo "$EXIST_HOME is unset or set to the empty string. Please set this variable"
     exit 1 # terminate and indicate error
 fi
+if [ -z "${LACE_HOME}" ]; then
+	    echo "$LACE_HOME is unset or set to the empty string. Please set this variable"
+	        exit 1 # terminate and indicate error
+fi
 if [ ! -f $EXIST_HOME/bin/client.sh ]; then
    echo "eXist client.sh script not available at $EXIST_HOME/bin/client.sh"
    exit 1
@@ -19,3 +23,4 @@ read username
 echo "exist Password?:"
 read password
 $EXIST_HOME/bin/client.sh -u $username -P $password -s -c /db/laceData --parse $WORK_DIR 
+$EXIST_HOME/bin/client.sh -u $username -P $password -x -F $LACE_HOME/eXist-db/db/apps/laceApp/addManuallyVerifiedAttr.xq
