@@ -1,8 +1,51 @@
+# -*- coding: UTF-8 -*-
+#!/usr/bin/python
 from lace import  db, Archivetext, Ocrrun, Outputpage, Hocrtype, POSSIBLE_HOCR_VIEWS
-import glob, os, sys, tarfile
-from lace import get_absolute_textpath, APP_ROOT
+import glob, os, sys, shutil, tarfile, tempfile
+from lace import get_absolute_textpath, get_image_dir_path, APP_ROOT
 from populate_db import get_page_scores, collect_archive_text_info, get_runs, int_for_hocr_type_string, string_for_hocr_type_int
 DEBUG = True
+
+def install_images(text_identifier):
+    import urllib2
+    import StringIO
+    import gzip
+    import tarfile
+    import os
+    image_tar_directory_url = "http://heml.mta.ca/LaceImages/"
+    image_tar_url = image_tar_directory_url + text_identifier + "_color.tar.gz"
+    temp_dir = tempfile.mkdtemp()
+    tar_file_name = os.path.join(temp_dir,os.path.basename(image_tar_url))
+    try:
+        f = urllib2.urlopen(image_tar_url)
+        print "downloading matching images. This can take minutes"
+        # Open our local file for writing
+        with open(tar_file_name, "wb") as tar_file_handle:
+            while True:
+                data = f.read(4096)
+                if data:
+                    tar_file_handle.write(data)
+                    print ". "
+                else:
+                    break
+    #
+    # Set the file's current position to the beginning
+    # of the file so that gzip.GzipFile can read
+    # its contents from the top.
+    #
+    except Exception as e:
+        print e
+    print "done downloading. Extracting ..."
+    try:
+        tar = tarfile.open(name=tar_file_name, mode='r:gz')
+    except Exception as e:
+        print('ERROR file %s not a valid tar.gz file.' % image_tar_url)
+        print e
+    try:
+        tar.extractall(path=get_image_dir_path())
+    except Exception as e:
+        print('ERROR couldn\'t put images in %s.' % get_image_dir_path())
+        print e
 textpath = get_absolute_textpath('')
 db.create_all()
 page_count = 0
@@ -25,7 +68,26 @@ for file_in in sys.argv[1:]:
     id_directory = os.path.join(textpath,identifier)
     if not os.path.exists(id_directory):
         os.makedirs(id_directory)
-    tar.extractall(path=id_directory)
+    temp_dir = tempfile.mkdtemp()
+    try:
+        tar.extractall(path=temp_dir)
+	#check if the tar uses the new, wrapped form
+	if os.path.isdir(os.path.join(temp_dir, identifier)):
+            src_dir = os.path.join(temp_dir, identifier)
+	else:
+	    src_dir = temp_dir
+	source = os.listdir(src_dir)
+        print "source: ", source
+	for a_dir in source:
+                print "one dir: ", a_dir
+                full_path_to_a_dir = os.path.join(src_dir,a_dir)
+                print "full path: ", full_path_to_a_dir
+		try:
+                    shutil.move(full_path_to_a_dir, id_directory)
+                except:
+                    print full_path_to_a_dir + " already exists."
+    finally:
+	shutil.rmtree(temp_dir)
     try:
         info =  collect_archive_text_info( id_directory + '/' + identifier + '_meta.xml')
         print info
@@ -148,6 +210,8 @@ for file_in in sys.argv[1:]:
         os.rename(file_in, file_out)
     else:
         os.rename(file_in, file_in + '-processed')
+    install_images(identifier)
+    
 
 
 
