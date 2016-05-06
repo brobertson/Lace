@@ -466,6 +466,9 @@ def runs(text_id):
     print text
     return render_template('runs.html', text_info = text )
 
+def get_image_dir_path():
+    return APP_ROOT + '/static/Images/Color/'
+
 @app.route('/image_test', methods=['GET'])
 def serve_img():
     from flask import render_template
@@ -474,7 +477,7 @@ def serve_img():
     image_file = file_name.split('.')[0] + '.jpg'
     book = request.args.get('book')
     book = book.split('/')[-1]
-    img = Image.open(APP_ROOT + '/static/Images/Color/' + book + '_color/' + image_file)
+    img = Image.open(get_image_dir_path() + book + '_color/' + image_file)
     #img = Image.open('/mnt/Europe/Lace_Resources/Images/Color/490021999brucerob_color/490021999brucerob_0100.jpg')
     image_region = image_region_from_bbox_string(img, bbox)
     #return render_template("test.html", img_data=urllib.quote(encode_pil_image(image_region).rstrip('\n')))
