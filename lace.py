@@ -607,6 +607,7 @@ def html_body_elements(textpath):
 
 
 @app.route('/sidebysideview2/<outputpage_id>')
+@requires_auth
 def side_by_side_view2(outputpage_id):
     from flask import render_template
     this_page = Outputpage.query.filter_by(id = outputpage_id).first()
