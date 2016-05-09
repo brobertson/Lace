@@ -201,18 +201,19 @@ for file_in in sys.argv[1:]:
                                 page_count = page_count + 1#db.session.commit()
                             except:
                                 raise
-        db.session.commit()
-    out_dir = os.path.abspath(os.path.join(os.path.dirname(file_in), '..', 'Outbox'))
-    print "out dir is:", out_dir
-    try:
-	#this fails on windows /vagrant
-        if os.path.exists(out_dir):
-            print "it exists, so we are moving", file_in, "to it"
-            file_out = os.path.join(out_dir,os.path.basename(file_in))
-            os.rename(file_in, file_out)
-        else:
-            os.rename(file_in, file_in + '-processed')
-    install_images(identifier)
+db.session.commit()
+out_dir = os.path.abspath(os.path.join(os.path.dirname(file_in), '..', 'Outbox'))
+print "out dir is:", out_dir
+try:
+    if os.path.exists(out_dir):
+        print "it exists, so we are moving", file_in, "to it"
+        file_out = os.path.join(out_dir,os.path.basename(file_in))
+        os.rename(file_in, file_out)
+    else:
+        os.rename(file_in, file_in + '-processed')
+except Exception as e:
+    print e
+install_images(identifier)
     
 
 
