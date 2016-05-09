@@ -4,7 +4,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from settings import APP_ROOT, POSSIBLE_HOCR_VIEWS,PREFERENCE_OF_HOCR_VIEWS
 from local_settings import http_auth_secret_key, database_uri, exist_db_uri
 from flaskext.markdown import Markdown
-from digestauthentication import auth, get_pw, users
+from authentication import auth, get_pw, users
 from PIL import Image
 import StringIO
 import urllib
@@ -14,21 +14,6 @@ Markdown(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 db = SQLAlchemy(app)
 
-#authentication
-app.config['SECRET_KEY'] = http_auth_secret_key 
-auth = HTTPDigestAuth()
-users = {
-    "john": "Hello",
-    "susan": "byebye"
-}
-
-@auth.get_password
-def get_pw(username):
-    if username in users:
-        return users.get(username)
-    return None
-
-#end authentication
 
 #rank the hocr views
 hocr_view_score = dict()
@@ -194,7 +179,6 @@ def index():
     return render_template('index.html')
 
 @app.route('/about')
-@auth.login_required
 def about():
     from flask import render_template
     return render_template('about.html')
@@ -646,7 +630,6 @@ def html_body_elements(textpath):
 def side_by_side_view2(outputpage_id):
     this_page = Outputpage.query.filter_by(id = outputpage_id).first()
     text_id = this_page.hocrtype.ocrrun.archivetext.archive_number
-    print "my text_id: ", text_id
     if "compltes" in text_id: 
         return side_by_side_view2_restricted(outputpage_id) 
     else:
