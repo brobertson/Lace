@@ -2,7 +2,7 @@
 from flask import Flask, url_for, request, abort, send_file
 from flask.ext.sqlalchemy import SQLAlchemy
 from settings import APP_ROOT, POSSIBLE_HOCR_VIEWS,PREFERENCE_OF_HOCR_VIEWS
-from local_settings import http_auth_secret_key, database_uri, exist_db_uri
+from local_settings import  database_uri, exist_db_uri
 from flaskext.markdown import Markdown
 from authentication import auth, get_pw, users
 from PIL import Image
