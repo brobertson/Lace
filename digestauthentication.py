@@ -1,5 +1,6 @@
-from flask_httpauth import HTTPDigestAuth
-auth = HTTPDigestAuth()
+from flask_httpauth import HTTPBasicAuth
+auth = HTTPBasicAuth()
+
 users = {
     "john": "Hello",
     "susan": "byebye"
