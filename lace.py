@@ -555,7 +555,7 @@ def view_html(textpath):
             a =  open(APP_ROOT+ '/' + textpath)
             tree = etree.parse(a)
         except Exception as e:
-            print e
+            print "failed to parse tree: ", e
     try:
         head_element = tree.xpath("/html:html/html:head | /html/head",
                                   namespaces={
@@ -588,11 +588,33 @@ def view_html(textpath):
         output =  etree.tostring(tree, pretty_print=True,encoding=unicode,doctype='<!DOCTYPE html>')# PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">')
         return Response(unicodedata.normalize("NFC",output), mimetype='application/xhtml+xml')
     except Exception as e:
-	print e
-        from flask import render_template
-        return render_template('nohtmlfile.html')
-	#print "We're upset about:", e
-        #flask.abort() 
+        print "first html rendering pass failed. This must be an early, Rigaudon run."
+        #try the older, less rich representation, suitable for Rigaudon output
+	try:
+        	a =  open(APP_ROOT+ '/' + textpath)
+                tree = etree.parse(a)
+                root = tree.getroot()
+        	head_element = tree.xpath("/html:html/html:head | /html/head",namespaces={
+                                  'html': "http://www.w3.org/1999/xhtml"})[0]
+        	css_file = url_for('static', filename='hocr_old.css')
+        	style = etree.SubElement(
+            	head_element, "link", rel="stylesheet", type="text/css",
+            	href=css_file)
+        	span_elements = tree.xpath("//html:span | //span", namespaces={'html': "http://www.w3.org/1999/xhtml"})
+        	#Add onclick element so that clicking on the iframe's html will send the entire framing document
+        	#forward to the next page
+        	body = tree.xpath("//html:body | //body", namespaces={'html': "http://www.w3.org/1999/xhtml"})
+        	#body[0].set('onclick','return parent.page_forward()')
+        	for span in span_elements:
+            		span.tail = " "
+        	output =  etree.tostring(root, pretty_print=True,encoding=unicode)
+        	return unicodedata.normalize("NFC",output)
+	except Exception as e2:
+		print e, e2
+        	from flask import render_template
+        	return render_template('nohtmlfile.html')
+		#print "We're upset about:", e
+        	#flask.abort() 
 
 def html_body_elements(textpath):
     from lxml import etree
