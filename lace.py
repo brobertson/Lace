@@ -2,9 +2,9 @@
 from flask import Flask, url_for, request, abort, send_file
 from flask.ext.sqlalchemy import SQLAlchemy
 from settings import APP_ROOT, POSSIBLE_HOCR_VIEWS,PREFERENCE_OF_HOCR_VIEWS
-from local_settings import database_uri, exist_db_uri
+from local_settings import http_auth_secret_key, database_uri, exist_db_uri
 from flaskext.markdown import Markdown
-from authentication import requires_auth
+from digestauthentication import auth, get_pw, users
 from PIL import Image
 import StringIO
 import urllib
@@ -15,7 +15,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 db = SQLAlchemy(app)
 
 #authentication
-app.config['SECRET_KEY'] = 'secret key here'
+app.config['SECRET_KEY'] = http_auth_secret_key 
 auth = HTTPDigestAuth()
 users = {
     "john": "Hello",
@@ -189,7 +189,6 @@ class Outputpage(db.Model):
 
 
 @app.route('/')
-@requires_auth
 def index():
     from flask import render_template
     return render_template('index.html')
