@@ -25,7 +25,7 @@ def install_images(text_identifier):
                 data = f.read(4096)
                 if data:
                     tar_file_handle.write(data)
-                    print ". "
+                    print ".",
                 else:
                     break
     #
@@ -204,12 +204,14 @@ for file_in in sys.argv[1:]:
         db.session.commit()
     out_dir = os.path.abspath(os.path.join(os.path.dirname(file_in), '..', 'Outbox'))
     print "out dir is:", out_dir
-    if os.path.exists(out_dir):
-        print "it exists, so we are moving", file_in, "to it"
-        file_out = os.path.join(out_dir,os.path.basename(file_in))
-        os.rename(file_in, file_out)
-    else:
-        os.rename(file_in, file_in + '-processed')
+    try:
+	#this fails on windows /vagrant
+        if os.path.exists(out_dir):
+            print "it exists, so we are moving", file_in, "to it"
+            file_out = os.path.join(out_dir,os.path.basename(file_in))
+            os.rename(file_in, file_out)
+        else:
+            os.rename(file_in, file_in + '-processed')
     install_images(identifier)
     
 
