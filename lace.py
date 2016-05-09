@@ -8,10 +8,27 @@ from authentication import requires_auth
 from PIL import Image
 import StringIO
 import urllib
+from flask_httpauth import HTTPDigestAuth
 app = Flask(__name__)
 Markdown(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 db = SQLAlchemy(app)
+
+#authentication
+app.config['SECRET_KEY'] = 'secret key here'
+auth = HTTPDigestAuth()
+users = {
+    "john": "Hello",
+    "susan": "byebye"
+}
+
+@auth.get_password
+def get_pw(username):
+    if username in users:
+        return users.get(username)
+    return None
+
+#end authentication
 
 #rank the hocr views
 hocr_view_score = dict()
@@ -177,8 +194,8 @@ def index():
     from flask import render_template
     return render_template('index.html')
 
-
 @app.route('/about')
+@auth.login_required
 def about():
     from flask import render_template
     return render_template('about.html')
@@ -255,7 +272,6 @@ def classifiers():
 
 def pad_page_num_for_archive(num):
     return num.zfill(4)
-
 
 def url_for_page_image(text_id, page_num):
     file_address = 'Images/Color/' + text_id + \
@@ -627,10 +643,21 @@ def html_body_elements(textpath):
     return unicodedata.normalize("NFC",body_string)
 
 
-
 @app.route('/sidebysideview2/<outputpage_id>')
-@requires_auth
 def side_by_side_view2(outputpage_id):
+    this_page = Outputpage.query.filter_by(id = outputpage_id).first()
+    text_id = this_page.hocrtype.ocrrun.archivetext.archive_number
+    print "my text_id: ", text_id
+    if "compltes" in text_id: 
+        return side_by_side_view2_restricted(outputpage_id) 
+    else:
+        return side_by_side_view2_allowed(outputpage_id)   
+
+@auth.login_required
+def side_by_side_view2_restricted(outputpage_id):
+    return side_by_side_view2_allowed(outputpage_id)
+
+def side_by_side_view2_allowed(outputpage_id):
     from flask import render_template
     this_page = Outputpage.query.filter_by(id = outputpage_id).first()
     text_id = this_page.hocrtype.ocrrun.archivetext.archive_number
@@ -670,6 +697,7 @@ def side_by_side_view2(outputpage_id):
                                pagination_array=pagination_array)
     except IOError:
         pass#return render_template('no_such_text_id.html', textid=text_id), 404
+
 
 
 if __name__ == '__main__':
