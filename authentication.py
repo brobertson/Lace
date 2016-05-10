@@ -1,10 +1,6 @@
 from flask_httpauth import HTTPBasicAuth
+from users import users
 auth = HTTPBasicAuth()
-
-users = {
-    "john": "Hello",
-    "susan": "byebye"
-}
 
 @auth.get_password
 def get_pw(username):

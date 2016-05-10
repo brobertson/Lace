@@ -5,6 +5,7 @@ from settings import APP_ROOT, POSSIBLE_HOCR_VIEWS,PREFERENCE_OF_HOCR_VIEWS
 from local_settings import  database_uri, exist_db_uri
 from flaskext.markdown import Markdown
 from authentication import auth, get_pw, users
+from restricted_volumes import text_identifier_restricted_list
 from PIL import Image
 import StringIO
 import urllib
@@ -115,7 +116,7 @@ class Ocrrun(db.Model):
           value = round(float(value),4)
           return str(value) + "%"
        except:
-          return "[database at '" + exist_db_uri + "' offline]"
+          return "n/a"
     def db_correct(self):
        import urllib2
        query = exist_db_uri + "apps/laceApp/countBScore.xq?collectionPath=" + self.exist_db_path()
@@ -125,7 +126,7 @@ class Ocrrun(db.Model):
           value = round(float(value),4)
           return str(value) + "%"
        except:
-          return "[database at '" + exist_db_uri + "' offline]"
+          return "n/a"
 
     def exist_zip(self):
        from datetime import date
@@ -630,7 +631,7 @@ def html_body_elements(textpath):
 def side_by_side_view2(outputpage_id):
     this_page = Outputpage.query.filter_by(id = outputpage_id).first()
     text_id = this_page.hocrtype.ocrrun.archivetext.archive_number
-    if "compltes" in text_id: 
+    if any(an_identifier in text_id for an_identifier in text_identifier_restricted_list): 
         return side_by_side_view2_restricted(outputpage_id) 
     else:
         return side_by_side_view2_allowed(outputpage_id)   
