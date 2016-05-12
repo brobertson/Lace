@@ -24,7 +24,7 @@
         var table = new google.visualization.Table(document.getElementById('table_div'));
 	var formatter = new google.visualization.DateFormat({pattern: "yyyy-MM-dd-HH-mm"});
 	formatter.format(data, 0); // Apply formatter to second column
-	table.draw(data, {sortColumn: 0, sortAscending: false, allowHtml: true,'width': 900,cssClassNames:  {headerRow: 'headerRow', tableRow: 'tableRow'}});
+	table.draw(data, {sortColumn: 0, sortAscending: false, allowHtml: true,'width': 1200,cssClassNames:  {headerRow: 'headerRow', tableRow: 'tableRow'}});
       }
     </script>
 {% endblock %}
