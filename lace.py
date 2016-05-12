@@ -131,7 +131,7 @@ class Ocrrun(db.Model):
     def exist_zip(self):
        from datetime import date
        myZipName = self.archivetext.archive_number + "_" + date.today().strftime('%Y-%m-%d') + "_lace.zip"
-       value  =  "http://localhost:8899/exist/apps/laceApp/downloadZip.xq?collectionPath=" + self.exist_db_path() + "&zipName=" + myZipName
+       value  =  exist_db_uri + "apps/laceApp/downloadZip.xq?collectionPath=" + self.exist_db_path() + "&zipName=" + myZipName
        return value
 
 class Hocrtype(db.Model):
@@ -469,6 +469,7 @@ def runs(text_id):
 def get_image_dir_path():
     return APP_ROOT + '/static/Images/Color/'
 
+
 @app.route('/image_test', methods=['GET'])
 def serve_img():
     from flask import render_template
@@ -508,8 +509,24 @@ def add_javascript(etree, head_element, a_script):
             src=javascript_file)
     return etree
 
+
+#This provides a $SCRIPT_ROOT variable for javascript calls, 
+#similar to http://flask.pocoo.org/docs/0.10/patterns/jquery/#where-is-my-site 
+# but without templating
+# long run, we should look into doing all of this with templates and not etree
+def add_javascript_scriptroot(etree, head_element):
+    print "request.script_root: ", request.script_root
+    try:
+        script = etree.XML("""<script type="text/javascript">
+  $SCRIPT_ROOT ='""" +  request.script_root + """'
+  $EXIST_DB_ROOT = '""" + exist_db_uri + """'
+</script>""")
+        script_link = head_element.append(script)
+    except Exception as e:
+        print "failed to append request.script_root, ", e
+    return etree 
 def add_html_javascripts(etree, head_element):
-    #for js_file in ["javascripts/jquery.focus.js", "http://code.jquery.com/jquery-1.10.2.js", "http://code.jquery.com/ui/1.11.4/jquery-ui.js", 'javascripts/jquery.tipsy.js','javascripts/tipsy.hocr.js', 'javascripts/cts_input.js']:
+    add_javascript_scriptroot(etree, head_element)
     for js_file in ["http://code.jquery.com/jquery-1.10.2.js", "http://code.jquery.com/ui/1.11.4/jquery-ui.js", 'javascripts/jquery.tipsy.js','javascripts/lace_config.js','javascripts/cts_greek_texts.js', 'javascripts/tipsy.hocr.js']:
        add_javascript(etree, head_element, js_file)
     return etree
