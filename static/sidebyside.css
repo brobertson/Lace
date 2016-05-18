@@ -1,7 +1,7 @@
 @import url(http://fonts.googleapis.com/css?family=Junge);
 @import url("http://fonts.googleapis.com/css?family=Cardo");
 @import url(http://fonts.googleapis.com/css?family=Droid+Sans);
-
+@import url("http://fonts.googleapis.com/css?family=Quicksand");
 div.line {
    float:left;
    width:100%;
@@ -13,9 +13,10 @@ div.line {
 }
 
 body {
-  font-family: 'Cardo', 'Junge', serif;
+  font-family: 'Quicksand', 'Cardo', 'Junge', serif;
   font-size: 16px;
 }
+
 
 tr.headerRow {  
 	font-family: 'Droid Sans';
@@ -41,14 +42,19 @@ pre {
 /*       position: absolute; 
        top: 0; 
        left: 0; */
-       background-color: #666; 
+  font-family:'Quicksand';
+  color:#38558F;
+      background-color:#eee;
        width: 100%; 
-       color: #fff;
+      /* color: #fff;*/
        padding: 7px;
        font-style: bold;
 	font-size: 14pt;
      }
 
+span#main_title {
+    font-size: 18pt;
+}
      div#banner span {
 	     margin-left: 50px;
      }

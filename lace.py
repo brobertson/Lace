@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from flask import Flask, url_for, request, abort, send_file
+from flask import Flask, url_for, request, abort, send_file, redirect
 from flask.ext.sqlalchemy import SQLAlchemy
 from settings import APP_ROOT, POSSIBLE_HOCR_VIEWS,PREFERENCE_OF_HOCR_VIEWS
 from local_settings import  database_uri, exist_db_uri
@@ -42,6 +42,9 @@ class Archivetext(db.Model):
         out = sorted(self.ocrruns, key=lambda x: x.date, reverse=True)
         for run in out:
             print run, run.date
+        return out
+    def prefered_run(self):
+        out = self.date_sorted_runs()[0]
         return out
 
 class Ocrrun(db.Model):
@@ -114,7 +117,7 @@ class Ocrrun(db.Model):
           response = urllib2.urlopen(query)
           value = response.read()
           value = round(float(value),4)
-          return str(value) + "%"
+          return str(value) 
        except:
           return "n/a"
     def db_correct(self):
@@ -176,8 +179,8 @@ class Outputpage(db.Model):
 
 @app.route('/')
 def index():
-    from flask import render_template
-    return render_template('index.html')
+    from flask import redirect
+    return redirect(url_for('catalog'))
 
 @app.route('/about')
 def about():

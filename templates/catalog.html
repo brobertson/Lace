@@ -3,11 +3,70 @@
 {% block top %}
 {% endblock %}
 {% block image_left %}
-<h2>{{work_count}} Texts</h2>
-{% for work in works %}
-<h3 class="textinfo"><a href="{{ url_for('runs', text_id=work.archive_number) }}">{{ work.creator }} ({{ work.date }}). <i>{{work.title}}</i> {{work.volume}}</a></h3>
+<ol><li>Email For a username and password</li>
+<li>Start correcting one of the texts below or ask for one in our <a href="http://heml.mta.ca/lace/catalog">collection</a> to be added</li>
+<li>Watch the progress bar grow as the text is corrected</li>
+<li>Download the complete text when you're done</li>
+</ol>
+<!-- Event card -->
+<style>
+.demo-card-event.mdl-card {
+  width: 256px;
+  height: 200px;
+  background: #38558F;
+}
+.demo-card-event > .mdl-card__actions {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.demo-card-event > .mdl-card__title {
+  align-items: flex-start;
+  color: #fff;
+  height: 30px;
+ /* background: url('../assets/demos/welcome_card.jpg') center / cover; */
+}
 
+.demo-card-event > .mdl-card__title > h4 {
+  margin-top: 0;
+  font-size: 14px;
+}
+.demo-card-event > .mdl-card__actions {
+  display: flex;
+  box-sizing:border-box;
+  align-items: center;
+}
+.demo-card-event > .mdl-card__actions > .material-icons {
+  padding-right: 10px;
+}
+.demo-card-event > .mdl-card__title,
+.demo-card-event > .mdl-card__actions,
+.demo-card-event > .mdl-card__actions > .mdl-button {
+  color: #fff;
+}
+</style>
+<div class="mdl-grid">
+{% for work in works %}
+ <div class="mdl-cell demo-card-event mdl-card mdl-shadow--2dp">
+  <div class="mdl-card__title mdl-card--expand">
+    <h4>
+      <i>{{ work.title }}</i>  {{work.volume}}
+     {{work.date}}
+      {{ work.creator }}. {{ work.publisher }} 
+      <br/>
+    </h4>
+  </div>
+<div id="progressbar{{work.id}}" class="mdl-progress mdl-js-progress"></div>
+   <script language="javascript">
+      document.querySelector('#progressbar{{work.id}}').addEventListener('mdl-componentupgraded', function() {
+         this.MaterialProgress.setProgress({{ work.prefered_run().db_completed() }});
+      });
+   </script>
+  <div class="mdl-card__actions mdl-card--border">
+    	<button onclick="location.href='{{ url_for('render_page',hocrtype_id=work.prefered_run().prefered_hocrtype().id)}}';" class="mdl-button mdl-button--icon mdl-button--colored"><i class="material-icons">create</i></button>
+					<button onclick="location.href='{{work.prefered_run().exist_zip()}}'" id="share-post-1" class="mdl-button mdl-button--icon mdl-button--colored"><i class="material-icons">file_download</i></button>
+</div>
+</div>
 {% endfor %}
+</div>
 {% endblock %}
 {% block right_side %}
 {% endblock %}
