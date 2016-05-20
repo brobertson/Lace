@@ -11,9 +11,6 @@
 
 <h1>Guide To Editing with Lace</h1>
 
-<h3>Types of Output Pages</h3>
-<p>This collection now permits users to correct permanently the OCR output of certain (though not all) texts. While the text of all output can be changed, those that are connected with an xml database, and therefore whose changes will be permanently stored have a gray text background. In contrast, most pages have a beige background; these can be edited, but the changes are not stored, and upon leaving the page all edits will be lost. Moreover, no other user will see the edits made on a beige background page. In contrast, changes to gray background pages will be stored in the database and visible to all other users when they load the page. The rest of this guide will pertain to the gray background pages. 
-</p>
 <h3>Colour Codes</h3>
 When OCR output is spellchecked, a html attribute is applied to indicate the spellcheck status of the word and what spellchecking strategies were applied to it. In display, these attributes are indicated with different colours. Spellcheck is performed with dictionaries, large lists of known-good words. Here are how the OCR words relate to dictionary words and the corresponding colour codes:
 <ul><li><p><span class="ocr_word"  data-spellcheck-mode="True">¹²παρελθεῖν</span>: this word has passed spellcheck. I.e., it matches one of the words in the spellcheck dictionary. Notice that there are characters allowed to be before and after the dictionary word, such as the '¹²' here, which do not disrupt the spellchecking. 
@@ -69,7 +66,7 @@ When OCR output is spellchecked, a html attribute is applied to indicate the spe
 The following advanced editing functions are available:
 <ol>
 <li><p>If an editor verifies a word with the <code>Control</code> key held down while pressing <code>Return</code>, the edit function is applied to all applicable words on all pages of the text. So, if the word is unchanged and verified, all words that contain that string are similarly verified (sight unseen), and will appear coloured as light-blue, no matter what page they appear on. This is a very powerful function and should be used sparingly, especially at first. However, it may become clear that a word like Ἰσραήλ is very unlikely to be incorrectly identified. In which case, verifying all of these words at once saves time.
-If a word has been changed, all words in all pages of the text that had the original form of the word will be changed to the edited form. Note that by 'original form' it is mean the very first form outputted. This if all words reading ἐπ’ are changed to ἐπ' (with a different final character) and then, using this function, one of those words is used to do a global change to ἐφ', this will not change words that originally were output as ἐπ’.
+If a word has been changed, all words in all pages of the text that had the original form of the word will be changed to the edited form. Note that by 'original form' it is mean the very first form outputted. Thus if all words reading ἐπ’ are changed to ἐπ' (with a different final character) and then, using this function, one of those words is used to do a global change to ἐφ', this will not change words that originally were output as ἐπ’.
 </p></li>
 <li><p>Holding the <code>Control</code> key down while also holding <code>Alt</code> key down while pressing <code>Return</code> causes a new work dialog box to be created for the purpose of notes.
 </p></li>
