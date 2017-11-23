@@ -78,7 +78,7 @@ function add_index_after(element, e,uniq) {
             data['fileName'] = fileName
             var filePath = doc.substring(0,n);
             data['filePath'] = filePath
-            $.post(exist_server_address +  '/exist/apps/laceApp/addIndexWordAfter.xq',data)
+            a = $.post(exist_server_address +  '/exist/apps/laceApp/addIndexWordAfter.xq',data)
 }
 
 function generate_image_tag_call(book_name, page_file, bbox) {
@@ -90,6 +90,7 @@ $(function() {
     $('.ocr_word').tipsy({
         gravity: 'n' ,
         trigger: 'manual',
+        opacity: 1,
         title: function() 
 /**/
               { var prev_bbox = ""; 

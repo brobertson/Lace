@@ -9,6 +9,8 @@
 {% block top %}
 {% endblock %}
 {% block image_left %}
+<div class="mdl-grid">
+<div class="mdl-cell mdl-cell--8-col">
 <ol><li>The text entitled <i>Alciphronis rhetoris Epistularum</i> is an example that can be edited without credentials. Use it to try out the features, make mistakes and explore.</li>
 <li>To gain access to a different text, please email <a href="mailto:gocrc2016@gmail.com">&lt;gocrc2016@gmail.com&gt;</a> for a username and password. Login will be prompted once you have selected a text</li>
 <li>You may either begin by correcting one of the texts below, or you may ask for a new text from our <a href="http://heml.mta.ca/lace/catalog">collection</a> to be added</li>
@@ -16,6 +18,8 @@
 <li>Download html, PDF and EPUB versions when you're done, and ...</li>
 <li>If your work is 99.95% accurate, we'll pay to have it converted to TEI-P5!</li>
 </ol>
+</div>
+</div>
 <!-- Event card -->
 <style>
 .demo-card-event.mdl-card {
@@ -53,7 +57,7 @@
 </style>
 <div class="mdl-grid">
 {% for work in works %}
- <div class="mdl-cell demo-card-event mdl-card mdl-shadow--2dp">
+ <div class="mdl-cell mdl-cell--4-col mdl-cell--6-col-phone demo-card-event mdl-card mdl-shadow--2dp">
   <div class="mdl-card__title mdl-card--expand">
     <h4>
       <i>{{ work.title }}</i>  {{work.volume}}
