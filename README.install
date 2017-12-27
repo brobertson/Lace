@@ -1,8 +1,12 @@
-sudo apt-get install libmysqlclient-dev python-pip python-dev sqlite3
+sudo apt-get install libmysqlclient-dev python-pip python-dev sqlite3 libxml-dev libxslt-dev libxml2-dev
 sudo pip install Flask
 sudo pip install Flask-SQLAlchemy
 sudo pip install Flask-Markdown
 sudo pip install MySQL-python
+sudo pip install flask_httpauth
+sudo pip install pillow
+sudo pip install lxml
+
 cd Lace
 cp example_local_settings.py local_settings.py
 vim local_settings.py
