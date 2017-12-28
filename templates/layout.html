@@ -7,7 +7,7 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='pagination.css') }}"/>
 {% block scripts %}
 {% endblock %}
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 <title>{% block title %}
 {% if text_info %}
   {{ text_info['title'] }}
@@ -41,17 +41,13 @@
 <div id="page_right">
 {% block right_side %}{% endblock %}
 </div>
-<div id="footer"><p>Copyright 2013, <a href="mailto:brobertson@mta.ca">Bruce Robertson,</a> Dept. of Classics, Mount Allison University and Federico Boschetti, ILC-CNR, Pisa. <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/80x15.png" /></a><br />This site is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</p>
+<div id="footer"><p>Copyright 2013-2017, <a href="mailto:brobertson@mta.ca">Bruce Robertson,</a> Dept. of Classics, Mount Allison University and Federico Boschetti, ILC-CNR, Pisa. <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/80x15.png" /></a><br />This site is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</p>
 <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
 </script>
 <script type="text/javascript">
 _uacct = "UA-6521346-1";
 urchinTracker();
 </script>
-<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
-<a href="https://twitter.com/share" class="twitter-share-button" data-via="heml" data-hashtags="GreekOCR">Tweet</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-<span class="g-plusone" data-size="small"></span>
 </div>
 </body>
 </html>
