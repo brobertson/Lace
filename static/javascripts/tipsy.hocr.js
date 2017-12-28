@@ -90,6 +90,7 @@ $(function() {
     $('.ocr_word').tipsy({
         gravity: 'n' ,
         trigger: 'manual',
+        opacity: 1,
         title: function() 
 /**/
               { var prev_bbox = ""; 
