@@ -4,5 +4,6 @@
         <create qname="@data-manually-confirmed" type="xs:string"/>
         <create qname="@data-spellcheck-mode" type="xs:string"/>
         <create qname="@class" type="xs:string"/>
+        <create qname="@title" type="xs:string"/>
     </index>
 </collection>
