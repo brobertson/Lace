@@ -11,8 +11,8 @@ let $dbroot := "/db/laceData/"
 (:
 let $filePath := request:get-parameter('filePath', '')
 :)
-let $filePath := "liveswithenglish06plutuoft/2016-04-19-07-46_loeb_2016-03-20-14-17-00128200.pyrnn.gz_selected_hocr_output"
-(:  let $filePath := "alciphronisrhet01schegoog/2016-04-03-16-14_teubner-serif-2013-12-16-11-26-00067000.pyrnn.gz_selected_hocr_output"
+let $filePath := ""
+(: let $filePath := "liveswithenglish06plutuoft/2016-04-19-07-46_loeb_2016-03-20-14-17-00128200.pyrnn.gz_selected_hocr_output"
 :)
 (:  logs into the collection :)
 let $dbpath := concat($dbroot, $filePath)
