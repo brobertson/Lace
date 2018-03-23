@@ -41,6 +41,9 @@ return
         <path>
             {util:collection-name($select_block)}
         </path>
+        <doc>
+            {util:document-name($select_block)}
+        </doc>
         <verifiedText>
 {let $select_words := $select_block/xh:span[@class="ocr_word"]
         for $select_word in $select_words
