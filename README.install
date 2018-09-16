@@ -1,3 +1,8 @@
+#### Announcement ####
+As of 2018-09-15, Lace has been written to be 100% an eXist-db application. This version, called Lace2, is available in its
+Github [repository](https://github.com/brobertson/Lace2).
+
+### Archived information follows ###
 sudo apt-get install libmysqlclient-dev python-pip python-dev sqlite3 libxml-dev libxslt-dev libxml2-dev
 sudo pip install Flask
 sudo pip install Flask-SQLAlchemy
